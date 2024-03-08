@@ -1,9 +1,16 @@
 // use std::borrow::Cow;
 // use sqlx::{encode::IsNull, sqlite::{SqliteArgumentValue, SqliteTypeInfo}, Sqlite};
 
-use serde::{Deserialize, Serialize};
+use std::{future::Future, pin::Pin};
 
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+use actix_web::{dev::Payload, error, web::Data, FromRequest, HttpRequest};
+use actix_web_httpauth::extractors::bearer::BearerAuth;
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
+
+use crate::AppState;
+
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, Default, ToSchema)]
 pub struct User {
     pub id: i64,
     pub name: Option<String>,
@@ -13,6 +20,60 @@ pub struct User {
     pub token: String,
     pub photo: Option<String>,
     pub admin: bool,
+}
+
+fn parse_token(token: &str) -> Option<(i64, String)> {
+    let mut token = token.splitn(2, ':');
+    let id = match token.next() {
+        Some(s) => match s.parse::<i64>() {
+            Ok(v) => v,
+            Err(_) => return None
+        },
+        None => return None
+    };
+
+    let token = match token.next() {
+        Some(s) => s.to_string(),
+        None => return None
+    };
+
+    Some((id, token))
+}
+
+impl FromRequest for User {
+    type Error = error::Error;
+    type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
+
+    fn from_request(req: &HttpRequest, pl: &mut Payload) -> Self::Future {
+        let state = req.app_data::<Data<AppState>>().unwrap();
+        let db = state.db.clone();
+        let token = BearerAuth::from_request(req, pl);
+
+        Box::pin(async move {
+            let (id, token) = match token.await {
+                Ok(t) => match parse_token(t.token()) {
+                    Some(t) => t,
+                    None => return Err(error::ErrorForbidden("invalid token"))
+                },
+                Err(e) => return Err(e.into())
+            };
+
+            let result = sqlx::query_as! {
+                User,
+                "select * from users where id = ? and token = ?",
+                id, token
+            }
+            .fetch_one(&db)
+            .await;
+
+            match result {
+                Ok(user) => Ok(user),
+                Err(_) => {
+                    Err(error::ErrorForbidden("not found"))
+                }
+            }
+        })
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]

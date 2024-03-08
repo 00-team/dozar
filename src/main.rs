@@ -1,15 +1,16 @@
 use std::env;
 
+use actix_files as af;
 use actix_web::{
-    get,
-    web::{Data, Query},
-    App, HttpResponse, HttpServer, Responder,
+    get, http::header::ContentType, web::Data, App, HttpResponse, HttpServer,
+    Responder,
 };
-use serde::Deserialize;
-use sqlx::{types::chrono, Pool, Sqlite, SqlitePool};
+// use actix_web_httpauth::extractors::bearer;
+use sqlx::{Pool, Sqlite, SqlitePool};
+use utoipa::OpenApi;
 
-mod models;
 mod api;
+mod models;
 
 pub struct AppState {
     db: Pool<Sqlite>,
@@ -59,6 +60,48 @@ pub struct AppState {
 //     }
 // }
 
+#[get("/openapi.json")]
+async fn openapi() -> impl Responder {
+    let mut openapi = api::user::ApiUserDoc::openapi();
+    openapi.paths.paths = openapi
+        .paths
+        .paths
+        .iter()
+        .map(|(path, value)| {
+            let path = api::user::ApiUserDoc::PATH.to_string() + path;
+            let mut value = value.to_owned();
+            value.operations.iter_mut().for_each(|(_, op)| {
+                if let Some(tags) = &openapi.tags {
+                    op.tags =
+                        Some(tags.iter().map(|t| t.name.clone()).collect());
+                }
+            });
+
+            (path, value)
+        })
+        .collect();
+
+    HttpResponse::Ok().json(openapi)
+}
+
+#[get("/rapidoc")]
+async fn rapidoc() -> impl Responder {
+    HttpResponse::Ok().content_type(ContentType::html()).body(
+        r###"<!doctype html>
+    <html><head><meta charset="utf-8"><style>rapi-doc {
+    --green: #00dc7d; --blue: #5199ff; --orange: #ff6b00;
+    --red: #ec0f0f; --yellow: #ffd600; --purple: #782fef; }</style>
+    <script type="module" src="/static/rapidoc.js"></script></head><body>
+    <rapi-doc spec-url="/openapi.json" persist-auth="true"
+    bg-color="#040404" text-color="#f2f2f2"
+    header-color="#040404" primary-color="#ec0f0f"
+    nav-text-color="#eee" font-size="largest"
+    allow-spec-url-load="false" allow-spec-file-load="false"
+    show-method-in-nav-bar="as-colored-block" response-area-height="500px"
+    show-header="false" schema-expand-level="1" /></body> </html>"###,
+    )
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenvy::from_path("./secrets.env").expect("could not read secrets.env");
@@ -75,6 +118,10 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(AppState { db: pool.clone() }))
+            .service(openapi)
+            .service(rapidoc)
+            .service(af::Files::new("/static", "./static").show_files_listing())
+            // .app_data(bearer::Config::default())
             .service(api::user::router())
     })
     .bind(("127.0.0.1", 7200))?
