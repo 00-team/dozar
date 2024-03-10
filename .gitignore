@@ -13,3 +13,6 @@ Cargo.lock
 *.pdb
 secrets.env
 db/
+dist/
+node_modules/
+package-lock.json
