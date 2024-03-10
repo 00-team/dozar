@@ -7,13 +7,13 @@ use actix_web::{
 };
 // use actix_web_httpauth::extractors::bearer;
 use sqlx::{Pool, Sqlite, SqlitePool};
-use utoipa::OpenApi;
+use utoipa::{openapi::security, OpenApi};
 
 mod api;
 mod models;
 
 pub struct AppState {
-    db: Pool<Sqlite>,
+    sql: Pool<Sqlite>,
 }
 
 // #[get("/")]
@@ -62,7 +62,19 @@ pub struct AppState {
 
 #[get("/openapi.json")]
 async fn openapi() -> impl Responder {
+    // TODO: make a modifier and move the openapi to docs.rs
     let mut openapi = api::user::ApiUserDoc::openapi();
+    if let Some(schema) = openapi.components.as_mut() {
+        schema.add_security_scheme(
+            "user_token",
+            security::SecurityScheme::Http(security::Http::new(
+                security::HttpAuthScheme::Bearer,
+            )),
+        )
+    }
+    openapi.security = Some(vec![
+        security::SecurityRequirement::new("user_token", [] as [&str; 0])
+    ]);
     openapi.paths.paths = openapi
         .paths
         .paths
@@ -117,7 +129,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .app_data(Data::new(AppState { db: pool.clone() }))
+            .app_data(Data::new(AppState { sql: pool.clone() }))
             .service(openapi)
             .service(rapidoc)
             .service(af::Files::new("/static", "./static").show_files_listing())

@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 log = "0.4"
-utoipa = { version = "4", features = ["actix_extras", "debug"]}
+utoipa = { version = "4", features = ["actix_extras", "debug"] }
 actix-web = "4"
 actix-utils = "3"
 actix-web-httpauth = "0.8"
@@ -17,7 +17,6 @@ serde = "1"
 serde_json = "1"
 chrono = { version = "0.4", features = ["serde"] }
 sqlx-cli = { version = "0.7", features = ["sqlite", "completions"] }
-redis = { version = "0.24", features = ["tokio-native-tls-comp", "json"] }
 
 [dependencies.sqlx]
 version = "0.7"

@@ -7,7 +7,7 @@ use crate::models::User;
 #[openapi(
     tags((name = "api::user")),
     paths(login, user_get), 
-    components(schemas(User))
+    components(schemas(User)),
 )]
 pub struct ApiUserDoc;
 

@@ -46,7 +46,7 @@ impl FromRequest for User {
 
     fn from_request(req: &HttpRequest, pl: &mut Payload) -> Self::Future {
         let state = req.app_data::<Data<AppState>>().unwrap();
-        let db = state.db.clone();
+        let pool = state.sql.clone();
         let token = BearerAuth::from_request(req, pl);
 
         Box::pin(async move {
@@ -63,7 +63,7 @@ impl FromRequest for User {
                 "select * from users where id = ? and token = ?",
                 id, token
             }
-            .fetch_one(&db)
+            .fetch_one(&pool)
             .await;
 
             match result {
