@@ -1,29 +1,44 @@
+use actix_web::web::{Data, Json};
 use actix_web::{get, post, HttpResponse, Responder, Scope};
-use utoipa::OpenApi;
+use serde::Deserialize;
+use utoipa::{OpenApi, ToSchema};
 
-use crate::models::User;
+use crate::models::{Action, User};
+use crate::docs::UpdatePaths;
+use crate::AppState;
+use crate::api::verification::verify;
 
 #[derive(OpenApi)]
 #[openapi(
     tags((name = "api::user")),
     paths(login, user_get), 
-    components(schemas(User)),
+    components(schemas(User, LoginBody)),
+    servers((url = "/user")),
+    modifiers(&UpdatePaths)
 )]
 pub struct ApiUserDoc;
 
-impl ApiUserDoc {
-    pub const PATH: &'static str = "/user";
+
+#[derive(Debug, Deserialize, ToSchema)]
+struct LoginBody {
+    phone: String,
+    code: String
 }
 
 #[utoipa::path(
     post,
+    request_body = LoginBody,
     responses(
         (status = 200, body = User)
     )
 )]
 #[post("/login/")]
-async fn login() -> impl Responder {
-    HttpResponse::Ok()
+async fn login(body: Json<LoginBody>, state: Data<AppState>) -> impl Responder {
+    if !verify(&body.phone, &body.code, Action::Login, &state.sql).await {
+        return HttpResponse::BadRequest().body("invalid verification");
+    }
+
+    HttpResponse::Ok().body("hi")
 }
 
 #[utoipa::path(
@@ -38,5 +53,5 @@ async fn user_get(user: User) -> impl Responder {
 }
 
 pub fn router() -> Scope {
-    Scope::new(ApiUserDoc::PATH).service(login).service(user_get)
+    Scope::new("/user").service(login).service(user_get)
 }
