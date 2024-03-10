@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 log = "0.4"
+rand = "0.8"
 utoipa = { version = "4", features = ["actix_extras", "debug"] }
 actix-web = "4"
 actix-utils = "3"
