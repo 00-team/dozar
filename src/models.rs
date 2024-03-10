@@ -6,6 +6,7 @@ use std::{future::Future, ops, pin::Pin};
 use actix_web::{dev::Payload, error, web::Data, FromRequest, HttpRequest};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use sha2::Digest;
 use sqlx::{
     encode::IsNull,
     sqlite::{SqliteArgumentValue, SqliteTypeInfo},
@@ -17,10 +18,10 @@ use crate::AppState;
 
 #[derive(Debug, Serialize, Deserialize, ToSchema, Default)]
 pub struct Address {
-    name: String
+    pub name: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema, Default)]
 pub struct User {
     pub id: i64,
     pub name: Option<String>,
@@ -69,6 +70,8 @@ impl FromRequest for User {
                 Err(e) => return Err(e.into()),
             };
 
+            let token = hex::encode(sha2::Sha512::digest(&token));
+
             let result = sqlx::query_as! {
                 User,
                 "select * from users where id = ? and token = ?",
@@ -78,7 +81,10 @@ impl FromRequest for User {
             .await;
 
             match result {
-                Ok(user) => Ok(user),
+                Ok(mut user) => {
+                    user.token = user.token[..32].to_string();
+                    Ok(user)
+                }
                 Err(_) => Err(error::ErrorForbidden("not found")),
             }
         })
@@ -148,9 +154,8 @@ pub struct Verification {
     pub tries: i64,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default)]
 pub struct JsonStr<T>(pub T);
-
 
 // impl<T> JsonStr<T> {
 //     pub fn into_inner(self) -> T {
