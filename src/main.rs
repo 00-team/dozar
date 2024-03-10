@@ -1,4 +1,4 @@
-use std::{env, os::unix::fs::PermissionsExt};
+use std::{env, fs::read_to_string, os::unix::fs::PermissionsExt};
 
 use actix_files as af;
 use actix_web::{
@@ -16,55 +16,18 @@ mod docs;
 mod models;
 mod utils;
 
+use crate::docs::ApiDoc;
+
 pub struct AppState {
-    sql: Pool<Sqlite>,
+    pub sql: Pool<Sqlite>,
 }
 
-// #[get("/")]
-// async fn index(state: Data<AppState>) -> impl Responder {
-//     let result = sqlx::query_as! {
-//         models::Product,
-//         "select * from products"
-//     }
-//     .fetch_all(&state.db)
-//     .await;
-//
-//     match result {
-//         Ok(products) => HttpResponse::Ok().json(products),
-//         Err(e) => HttpResponse::InternalServerError()
-//             .body(format!("fetch error: {e}")),
-//     }
-// }
-//
-// #[derive(Deserialize)]
-// struct AddProduct {
-//     title: String,
-//     price: i64,
-// }
-//
-// #[get("/add/")]
-// async fn add(
-//     state: Data<AppState>, query: Query<AddProduct>,
-// ) -> impl Responder {
-//     let created_at = chrono::Local::now().timestamp();
-//     let result = sqlx::query_as! {
-//         Product,
-//         "insert into products (title, created_at, price) values(?, ?, ?)",
-//         query.title,
-//         created_at,
-//         query.price
-//     }
-//     .execute(&state.db)
-//     .await;
-//
-//     match result {
-//         Ok(result) => HttpResponse::Ok()
-//             .body(format!("id: {}", result.last_insert_rowid())),
-//         Err(e) => HttpResponse::BadRequest().body(format!("sql error: {e}")),
-//     }
-// }
-
-use crate::docs::ApiDoc;
+#[get("/")]
+async fn index() -> impl Responder {
+    let result = read_to_string("dist/index.html")
+        .unwrap_or("err reading index.html".to_string());
+    HttpResponse::Ok().content_type(ContentType::html()).body(result)
+}
 
 #[get("/openapi.json")]
 async fn openapi() -> impl Responder {
