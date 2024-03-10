@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, os::unix::fs::PermissionsExt};
 
 use actix_files as af;
 use actix_web::{
@@ -120,10 +120,13 @@ async fn main() -> std::io::Result<()> {
     });
 
     let server = if cfg!(debug_assertions) {
-        server.bind(("127.0.0.1", 7200))
+        server.bind(("127.0.0.1", 7200)).unwrap()
     } else {
-        server.bind_uds("/usr/share/nginx/sockets/dozar.sock")
-    }.unwrap();
+        const PATH: &'static str = "/usr/share/nginx/sockets/dozar.sock";
+        let s = server.bind_uds(PATH).unwrap();
+        std::fs::set_permissions(PATH, std::fs::Permissions::from_mode(0o777))?;
+        s
+    };
 
     server.run().await
 }
