@@ -2,15 +2,19 @@ use std::env;
 
 use actix_files as af;
 use actix_web::{
-    get, http::header::ContentType, web::Data, App, HttpResponse, HttpServer,
-    Responder,
+    get,
+    http::header::ContentType,
+    web::{scope, Data},
+    App, HttpResponse, HttpServer, Responder,
 };
 // use actix_web_httpauth::extractors::bearer;
 use sqlx::{Pool, Sqlite, SqlitePool};
-use utoipa::{openapi::security, OpenApi};
+use utoipa::OpenApi;
 
 mod api;
+mod docs;
 mod models;
+mod utils;
 
 pub struct AppState {
     sql: Pool<Sqlite>,
@@ -60,40 +64,15 @@ pub struct AppState {
 //     }
 // }
 
+use crate::docs::ApiDoc;
+
 #[get("/openapi.json")]
 async fn openapi() -> impl Responder {
-    // TODO: make a modifier and move the openapi to docs.rs
-    let mut openapi = api::user::ApiUserDoc::openapi();
-    if let Some(schema) = openapi.components.as_mut() {
-        schema.add_security_scheme(
-            "user_token",
-            security::SecurityScheme::Http(security::Http::new(
-                security::HttpAuthScheme::Bearer,
-            )),
-        )
-    }
-    openapi.security = Some(vec![
-        security::SecurityRequirement::new("user_token", [] as [&str; 0])
-    ]);
-    openapi.paths.paths = openapi
-        .paths
-        .paths
-        .iter()
-        .map(|(path, value)| {
-            let path = api::user::ApiUserDoc::PATH.to_string() + path;
-            let mut value = value.to_owned();
-            value.operations.iter_mut().for_each(|(_, op)| {
-                if let Some(tags) = &openapi.tags {
-                    op.tags =
-                        Some(tags.iter().map(|t| t.name.clone()).collect());
-                }
-            });
+    let mut doc = ApiDoc::openapi();
+    doc.merge(api::user::ApiUserDoc::openapi());
+    doc.merge(api::verification::ApiVerificationDoc::openapi());
 
-            (path, value)
-        })
-        .collect();
-
-    HttpResponse::Ok().json(openapi)
+    HttpResponse::Ok().json(doc)
 }
 
 #[get("/rapidoc")]
@@ -133,8 +112,11 @@ async fn main() -> std::io::Result<()> {
             .service(openapi)
             .service(rapidoc)
             .service(af::Files::new("/static", "./static").show_files_listing())
-            // .app_data(bearer::Config::default())
-            .service(api::user::router())
+            .service(
+                scope("/api")
+                    .service(api::user::router())
+                    .service(api::verification::verification),
+            )
     })
     .bind(("127.0.0.1", 7200))?
     .run()

@@ -1,16 +1,26 @@
 // use std::borrow::Cow;
 // use sqlx::{encode::IsNull, sqlite::{SqliteArgumentValue, SqliteTypeInfo}, Sqlite};
 
-use std::{future::Future, pin::Pin};
+use std::{future::Future, ops, pin::Pin};
 
 use actix_web::{dev::Payload, error, web::Data, FromRequest, HttpRequest};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
-use serde::{Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use sqlx::{
+    encode::IsNull,
+    sqlite::{SqliteArgumentValue, SqliteTypeInfo},
+    Sqlite,
+};
 use utoipa::ToSchema;
 
 use crate::AppState;
 
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, Default, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, ToSchema, Default)]
+pub struct Address {
+    name: String
+}
+
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema)]
 pub struct User {
     pub id: i64,
     pub name: Option<String>,
@@ -20,6 +30,7 @@ pub struct User {
     pub token: String,
     pub photo: Option<String>,
     pub admin: bool,
+    pub addr: JsonStr<Address>,
 }
 
 fn parse_token(token: &str) -> Option<(i64, String)> {
@@ -27,14 +38,14 @@ fn parse_token(token: &str) -> Option<(i64, String)> {
     let id = match token.next() {
         Some(s) => match s.parse::<i64>() {
             Ok(v) => v,
-            Err(_) => return None
+            Err(_) => return None,
         },
-        None => return None
+        None => return None,
     };
 
     let token = match token.next() {
         Some(s) => s.to_string(),
-        None => return None
+        None => return None,
     };
 
     Some((id, token))
@@ -53,9 +64,9 @@ impl FromRequest for User {
             let (id, token) = match token.await {
                 Ok(t) => match parse_token(t.token()) {
                     Some(t) => t,
-                    None => return Err(error::ErrorForbidden("invalid token"))
+                    None => return Err(error::ErrorForbidden("invalid token")),
                 },
-                Err(e) => return Err(e.into())
+                Err(e) => return Err(e.into()),
             };
 
             let result = sqlx::query_as! {
@@ -68,9 +79,7 @@ impl FromRequest for User {
 
             match result {
                 Ok(user) => Ok(user),
-                Err(_) => {
-                    Err(error::ErrorForbidden("not found"))
-                }
+                Err(_) => Err(error::ErrorForbidden("not found")),
             }
         })
     }
@@ -113,31 +122,91 @@ pub struct Offer {
     pub timestamp: i64,
 }
 
-// Clone, PartialEq, Eq,
-// #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
-// pub struct GG<T>(T);
+#[derive(Debug, Serialize, Deserialize, ToSchema, Clone, PartialEq, Eq)]
+pub enum Action {
+    Login,
+    Delete,
+}
 
-// impl<'q, T> sqlx::Encode<'q, Sqlite> for Vec<String> {
-//     fn encode_by_ref(
-//         &self,
-//         buf: &mut <Sqlite as sqlx::database::HasArguments<'q>>::ArgumentBuffer,
-//     ) -> IsNull {
-//         let result = serde_json::to_string(self).unwrap_or("{}".to_string());
-//         buf.push(SqliteArgumentValue::Text(Cow::Owned(result)));
-//
-//         IsNull::No
+impl From<String> for Action {
+    fn from(value: String) -> Self {
+        match value.to_lowercase().as_str() {
+            "login" => Action::Login,
+            "delete" => Action::Delete,
+            _ => Action::Login,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+pub struct Verification {
+    pub id: i64,
+    pub action: Action,
+    pub phone: String,
+    pub code: String,
+    pub expires: i64,
+    pub tries: i64,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct JsonStr<T>(pub T);
+
+
+// impl<T> JsonStr<T> {
+//     pub fn into_inner(self) -> T {
+//         self.0
 //     }
 // }
 
-// impl<T> sqlx::Type<Sqlite> for GG<T> {
-//     fn type_info() -> SqliteTypeInfo {
-//         <&str as sqlx::Type<Sqlite>>::type_info()
-//     }
-// }
+impl<T> ops::Deref for JsonStr<T> {
+    type Target = T;
 
-// impl<T> From<String> for GG<T> {
-//     fn from(value: String) -> Self {
-//         let result: Vec<String> = serde_json::from_str(&value).unwrap();
-//         result
-//     }
-// }
+    fn deref(&self) -> &T {
+        &self.0
+    }
+}
+
+impl<T> ops::DerefMut for JsonStr<T> {
+    fn deref_mut(&mut self) -> &mut T {
+        &mut self.0
+    }
+}
+
+impl<T: Serialize> Serialize for JsonStr<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.0.serialize(serializer)
+    }
+}
+
+impl<'q, T> sqlx::Encode<'q, Sqlite> for JsonStr<T>
+where
+    T: Serialize,
+{
+    fn encode_by_ref(
+        &self,
+        buf: &mut <Sqlite as sqlx::database::HasArguments<'q>>::ArgumentBuffer,
+    ) -> IsNull {
+        let result = serde_json::to_string(&self.0).unwrap_or("{}".to_string());
+        buf.push(SqliteArgumentValue::Text(result.into()));
+
+        IsNull::No
+    }
+}
+
+impl<T> sqlx::Type<Sqlite> for JsonStr<T> {
+    fn type_info() -> SqliteTypeInfo {
+        <&str as sqlx::Type<Sqlite>>::type_info()
+    }
+}
+
+impl<T> From<String> for JsonStr<T>
+where
+    T: DeserializeOwned + Default,
+{
+    fn from(value: String) -> Self {
+        Self(serde_json::from_str::<T>(&value).unwrap_or(T::default()))
+    }
+}
