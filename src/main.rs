@@ -4,7 +4,7 @@ use actix_files as af;
 use actix_web::{
     get,
     http::header::ContentType,
-    web::{scope, Data},
+    web::{self, scope, Data},
     App, HttpResponse, HttpServer, Responder,
 };
 // use actix_web_httpauth::extractors::bearer;
@@ -56,6 +56,13 @@ async fn rapidoc() -> impl Responder {
     )
 }
 
+fn config_static(app: &mut web::ServiceConfig) {
+    if cfg!(debug_assertions) {
+        app.service(af::Files::new("/static", "./static"));
+        app.service(af::Files::new("/assets", "./dist/assets"));
+    }
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenvy::from_path("./secrets.env").expect("could not read secrets.env");
@@ -72,9 +79,10 @@ async fn main() -> std::io::Result<()> {
     let server = HttpServer::new(move || {
         App::new()
             .app_data(Data::new(AppState { sql: pool.clone() }))
+            .configure(config_static)
             .service(openapi)
             .service(rapidoc)
-            .service(af::Files::new("/static", "./static").show_files_listing())
+            .service(index)
             .service(
                 scope("/api")
                     .service(api::user::router())
