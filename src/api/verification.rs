@@ -17,11 +17,8 @@ use crate::{
 
 #[derive(OpenApi)]
 #[openapi(
-    // tags((name = "api::user")),
     paths(verification),
     components(schemas(VerificationData, VerificationResponse, Action)),
-    // servers((url = "/user")),
-    // modifiers(&UpdatePaths)
 )]
 pub struct ApiVerificationDoc;
 
