@@ -106,7 +106,7 @@ async fn main() -> std::io::Result<()> {
 
     sqlx::migrate!().run(&pool).await.expect("migration failed");
 
-    HttpServer::new(move || {
+    let server = HttpServer::new(move || {
         App::new()
             .app_data(Data::new(AppState { sql: pool.clone() }))
             .service(openapi)
@@ -117,8 +117,13 @@ async fn main() -> std::io::Result<()> {
                     .service(api::user::router())
                     .service(api::verification::verification),
             )
-    })
-    .bind(("127.0.0.1", 7200))?
-    .run()
-    .await
+    });
+
+    let server = if cfg!(debug_assertions) {
+        server.bind(("127.0.0.1", 7200))
+    } else {
+        server.bind_uds("/usr/share/nginx/sockets/dozar.sock")
+    }.unwrap();
+
+    server.run().await
 }
