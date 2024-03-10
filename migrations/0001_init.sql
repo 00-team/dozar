@@ -7,7 +7,8 @@ create table if not exists users (
     in_hold integer not null default 0,
     token text not null,
     photo text,
-    admin boolean not null default false
+    admin boolean not null default false,
+    addr text not null default "{}"
 );
 
 create table if not exists transactions (
@@ -44,3 +45,11 @@ create table if not exists offers (
     timestamp integer not null
 );
 
+create table if not exists verifications (
+    id integer primary key not null,
+    action text not null,
+    phone text not null,
+    code text not null,
+    expires integer not null,
+    tries integer not null default 0
+);
