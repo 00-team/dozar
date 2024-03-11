@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Sqlite};
 use utoipa::{OpenApi, ToSchema};
 
-use crate::models;
+use crate::{config::Config, models, utils::get_random_string};
 use crate::{
     models::Action,
     utils::{self, phone_validator},
@@ -18,7 +18,7 @@ use crate::{
 #[derive(OpenApi)]
 #[openapi(
     paths(verification),
-    components(schemas(VerificationData, VerificationResponse, Action)),
+    components(schemas(VerificationData, VerificationResponse, Action))
 )]
 pub struct ApiVerificationDoc;
 
@@ -79,7 +79,7 @@ async fn verification(
     .execute(&state.sql)
     .await;
 
-    let code = get_random_code();
+    let code = get_random_string(Config::CODE_ABC, 5);
     log::info!("code: {code}");
 
     let action = match &body.action {
@@ -97,12 +97,6 @@ async fn verification(
         expires: 180,
         action: body.action.to_owned(),
     })
-}
-
-fn get_random_code() -> String {
-    let mut rng = rand::thread_rng();
-
-    (0..5).map(|_| b"0123456789"[rng.gen_range(0..10)] as char).collect()
 }
 
 pub async fn verify(

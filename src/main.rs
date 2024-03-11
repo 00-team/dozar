@@ -1,22 +1,23 @@
 use std::{env, fs::read_to_string, os::unix::fs::PermissionsExt};
 
+use crate::config::Config;
+use crate::docs::ApiDoc;
 use actix_files as af;
 use actix_web::{
     get,
     http::header::ContentType,
+    middleware,
     web::{self, scope, Data},
     App, HttpResponse, HttpServer, Responder,
 };
-// use actix_web_httpauth::extractors::bearer;
 use sqlx::{Pool, Sqlite, SqlitePool};
 use utoipa::OpenApi;
 
 mod api;
+mod config;
 mod docs;
 mod models;
 mod utils;
-
-use crate::docs::ApiDoc;
 
 pub struct AppState {
     pub sql: Pool<Sqlite>,
@@ -68,6 +69,8 @@ async fn main() -> std::io::Result<()> {
     dotenvy::from_path("./secrets.env").expect("could not read secrets.env");
     pretty_env_logger::init();
 
+    let _ = std::fs::create_dir(Config::RECORD_DIR);
+
     let pool = SqlitePool::connect(
         &env::var("DATABASE_URL").expect("DATABASE_URL was not found in env"),
     )
@@ -78,6 +81,7 @@ async fn main() -> std::io::Result<()> {
 
     let server = HttpServer::new(move || {
         App::new()
+            .wrap(middleware::Logger::new("%s %r %Ts"))
             .app_data(Data::new(AppState { sql: pool.clone() }))
             .configure(config_static)
             .service(openapi)

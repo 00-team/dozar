@@ -1,20 +1,25 @@
+use actix_multipart::form::tempfile::TempFile;
+use actix_multipart::form::MultipartForm;
 use actix_web::web::{Data, Json};
-use actix_web::{get, post, HttpResponse, Responder, Scope};
-use rand::Rng;
+use actix_web::{
+    delete, get, patch, post, put, HttpResponse, Responder, Scope,
+};
 use serde::Deserialize;
 use sha2::{Digest, Sha512};
 use utoipa::{OpenApi, ToSchema};
 
 use crate::api::verification::verify;
+use crate::config::Config;
 use crate::docs::UpdatePaths;
-use crate::models::{Action, User};
+use crate::models::{Action, Address, JsonStr, User};
+use crate::utils::{get_random_bytes, get_random_string};
 use crate::AppState;
 
 #[derive(OpenApi)]
 #[openapi(
     tags((name = "api::user")),
-    paths(login, user_get),
-    components(schemas(User, LoginBody)),
+    paths(login, user_get, user_update, user_update_photo),
+    components(schemas(User, LoginBody, UpdateBody, Address, UpdatePhoto)),
     servers((url = "/user")),
     modifiers(&UpdatePaths)
 )]
@@ -40,7 +45,7 @@ async fn login(body: Json<LoginBody>, state: Data<AppState>) -> impl Responder {
         return HttpResponse::BadRequest().body("invalid verification");
     }
 
-    let token = get_random_token();
+    let token = get_random_string(Config::TOKEN_ABC, 69);
     let token_hashed = hex::encode(Sha512::digest(&token));
 
     let result = sqlx::query_as! {
@@ -97,14 +102,119 @@ async fn user_get(user: User) -> impl Responder {
     HttpResponse::Ok().json(user)
 }
 
-pub fn router() -> Scope {
-    Scope::new("/user").service(login).service(user_get)
+#[derive(Deserialize, ToSchema)]
+struct UpdateBody {
+    name: Option<String>,
+    addr: Option<Address>,
 }
 
-fn get_random_token() -> String {
-    let mut rng = rand::thread_rng();
+#[utoipa::path(
+    patch,
+    request_body = UpdateBody,
+    responses(
+        (status = 200, body = User)
+    )
+)]
+#[patch("/")]
+async fn user_update(
+    user: User, body: Json<UpdateBody>, state: Data<AppState>,
+) -> impl Responder {
+    let mut user = user;
+    let mut change = false;
+    if let Some(n) = &body.name {
+        change = true;
+        user.name = Some(n.clone());
+    };
 
-    const CHARSET: &[u8] = b"!@#$%^&*_+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*_+";
+    if let Some(a) = &body.addr {
+        change = true;
+        user.addr = JsonStr(a.clone());
+    };
 
-    (0..69).map(|_| CHARSET[rng.gen_range(0..CHARSET.len())] as char).collect()
+    if change {
+        if let Some(n) = user.name {
+            user.name = Some(n[..255].to_string());
+        }
+        user.addr.country = user.addr.country[..255].to_string();
+        user.addr.state = user.addr.state[..255].to_string();
+        user.addr.city = user.addr.city[..255].to_string();
+        user.addr.postal = user.addr.postal[..20].to_string();
+        user.addr.detail = user.addr.detail[..2047].to_string();
+
+        let _ = sqlx::query_as! {
+            User,
+            "update users set name = ? , addr = ? where id = ?",
+            user.name, user.addr, user.id
+        }
+        .execute(&state.sql)
+        .await;
+    }
+
+    HttpResponse::Ok().json(user)
+}
+
+#[derive(Debug, MultipartForm, ToSchema)]
+struct UpdatePhoto {
+    #[schema(value_type = String, format = Binary)]
+    #[multipart(limit = "18 MiB")]
+    photo: TempFile,
+}
+
+#[utoipa::path(
+    put,
+    request_body(content = UpdatePhoto, content_type = "multipart/form-data"),
+    responses(
+        (status = 200, body = User)
+    )
+)]
+#[put("/photo/")]
+async fn user_update_photo(
+    user: User, form: MultipartForm<UpdatePhoto>, state: Data<AppState>,
+) -> impl Responder {
+    let mut user = user;
+
+    let salt = if let Some(p) = &user.photo { p.clone() } else { get_random_bytes(8) };
+    println!("{salt}");
+
+    Config::RECORD_DIR;
+    println!("{:#?}", form.photo);
+    // let mut change = false;
+    // if let Some(n) = &body.name {
+    //     change = true;
+    //     user.name = Some(n.clone());
+    // };
+    //
+    // if let Some(a) = &body.addr {
+    //     change = true;
+    //     user.addr = JsonStr(a.clone());
+    // };
+
+    // if change {
+    //     if let Some(n) = user.name {
+    //         user.name = Some(n[..255].to_string());
+    //     }
+    //     user.addr.country = user.addr.country[..255].to_string();
+    //     user.addr.state = user.addr.state[..255].to_string();
+    //     user.addr.city = user.addr.city[..255].to_string();
+    //     user.addr.postal = user.addr.postal[..20].to_string();
+    //     user.addr.detail = user.addr.detail[..2047].to_string();
+    //
+    //     let _ = sqlx::query_as! {
+    //         User,
+    //         "update users set name = ? , addr = ? where id = ?",
+    //         user.name, user.addr, user.id
+    //     }
+    //     .execute(&state.sql)
+    //     .await;
+    // }
+
+    HttpResponse::Ok().json(user)
+}
+
+pub fn router() -> Scope {
+    Scope::new("/user")
+        .service(login)
+        .service(user_get)
+        .service(user_update)
+        .service(user_update_photo)
 }

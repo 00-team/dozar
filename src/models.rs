@@ -16,9 +16,15 @@ use utoipa::ToSchema;
 
 use crate::AppState;
 
-#[derive(Debug, Serialize, Deserialize, ToSchema, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema, Default)]
 pub struct Address {
-    pub name: String,
+    pub latitude: f32,
+    pub longitude: f32,
+    pub country: String,
+    pub state: String,
+    pub city: String,
+    pub postal: String,
+    pub detail: String
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema, Default)]
@@ -31,6 +37,7 @@ pub struct User {
     pub token: String,
     pub photo: Option<String>,
     pub admin: bool,
+    #[schema(value_type = Address)]
     pub addr: JsonStr<Address>,
 }
 
