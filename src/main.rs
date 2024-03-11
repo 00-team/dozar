@@ -61,6 +61,7 @@ fn config_static(app: &mut web::ServiceConfig) {
     if cfg!(debug_assertions) {
         app.service(af::Files::new("/static", "./static"));
         app.service(af::Files::new("/assets", "./dist/assets"));
+        app.service(af::Files::new("/records", "./records"));
     }
 }
 
