@@ -4,8 +4,8 @@
 
 -   [ ] make the user api
     -   [x] get
-    -   [ ] update
-    -   [ ] update/delete picture
+    -   [x] update
+    -   [x] update/delete picture
     -   [ ] add to wallet
     -   [ ] transactions
 -   [ ] products api
