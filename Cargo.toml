@@ -8,6 +8,7 @@ log = "0.4"
 rand = "0.8"
 sha2 = "0.10"
 hex = "0.4"
+image = "0.25"
 utoipa = { version = "4", features = ["actix_extras", "debug"] }
 actix-web = "4"
 actix-utils = "3"
