@@ -16,6 +16,11 @@ use utoipa::ToSchema;
 
 use crate::AppState;
 
+#[derive(Deserialize)]
+pub struct ListInput {
+    pub page: u32,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema, Default)]
 pub struct Address {
     pub latitude: f32,
@@ -40,6 +45,8 @@ pub struct User {
     #[schema(value_type = Address)]
     pub addr: JsonStr<Address>,
 }
+
+pub struct Admin(pub User);
 
 fn parse_token(token: &str) -> Option<(i64, String)> {
     let mut token = token.splitn(2, ':');
@@ -94,6 +101,23 @@ impl FromRequest for User {
                 }
                 Err(_) => Err(error::ErrorForbidden("not found")),
             }
+        })
+    }
+}
+
+impl FromRequest for Admin {
+    type Error = error::Error;
+    type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
+
+    fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
+        let user = User::from_request(req, payload);
+        Box::pin(async {
+            let user = user.await?;
+            if !user.admin {
+                return Err(error::ErrorForbidden("invalid admin"));
+            }
+
+            Ok(Admin(user))
         })
     }
 }

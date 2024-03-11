@@ -12,7 +12,7 @@ use utoipa::{OpenApi, ToSchema};
 use crate::api::verification::verify;
 use crate::config::Config;
 use crate::docs::UpdatePaths;
-use crate::models::{Action, Address, JsonStr, Transaction, User};
+use crate::models::{Action, Address, JsonStr, ListInput, Transaction, User};
 use crate::utils::{get_random_bytes, get_random_string, save_photo};
 use crate::AppState;
 
@@ -249,7 +249,7 @@ async fn user_delete_photo(
     )
 )]
 #[post("/wallet/")]
-async fn user_wallet_test(user: User, state: Data<AppState>) -> impl Responder {
+async fn user_wallet_test(user: User, _state: Data<AppState>) -> impl Responder {
     let client = awc::Client::new();
     let request = client
         .post("https://api.idpay.ir/v1.1/payment")
@@ -292,10 +292,6 @@ async fn user_wallet_test(user: User, state: Data<AppState>) -> impl Responder {
     HttpResponse::Ok()
 }
 
-#[derive(Deserialize)]
-struct ListInput {
-    page: u32,
-}
 
 #[utoipa::path(
     get,

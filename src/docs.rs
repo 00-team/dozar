@@ -1,5 +1,6 @@
 use utoipa::{
     openapi::{
+        self,
         security::{Http, HttpAuthScheme, SecurityScheme},
         Components, SecurityRequirement,
     },
@@ -9,7 +10,7 @@ use utoipa::{
 pub struct AddSecurity;
 
 impl Modify for AddSecurity {
-    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+    fn modify(&self, openapi: &mut openapi::OpenApi) {
         if openapi.components.is_none() {
             openapi.components = Some(Components::new());
         }
@@ -28,8 +29,32 @@ impl Modify for AddSecurity {
 
 pub struct UpdatePaths;
 
+pub fn doc_add_prefix(
+    openapi: &mut openapi::OpenApi, prefix: &str, update_tags: bool,
+) {
+    openapi.paths.paths = openapi
+        .paths
+        .paths
+        .iter()
+        .map(|(path, value)| {
+            let path = prefix.to_string() + path;
+            let mut value = value.to_owned();
+            if update_tags {
+                value.operations.iter_mut().for_each(|(_, op)| {
+                    if let Some(tags) = &openapi.tags {
+                        op.tags =
+                            Some(tags.iter().map(|t| t.name.clone()).collect());
+                    }
+                });
+            }
+
+            (path, value)
+        })
+        .collect();
+}
+
 impl Modify for UpdatePaths {
-    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+    fn modify(&self, openapi: &mut openapi::OpenApi) {
         let base_path = if let Some(s) = openapi.servers.as_mut() {
             if !s.is_empty() {
                 s.remove(0).url
@@ -40,29 +65,13 @@ impl Modify for UpdatePaths {
             String::new()
         };
 
-        openapi.paths.paths = openapi
-            .paths
-            .paths
-            .iter()
-            .map(|(path, value)| {
-                let path = base_path.clone() + path;
-                let mut value = value.to_owned();
-                value.operations.iter_mut().for_each(|(_, op)| {
-                    if let Some(tags) = &openapi.tags {
-                        op.tags =
-                            Some(tags.iter().map(|t| t.name.clone()).collect());
-                    }
-                });
-
-                (path, value)
-            })
-            .collect();
+        doc_add_prefix(openapi, &base_path, true);
     }
 }
 
 #[derive(OpenApi)]
 #[openapi(
-    servers((url = "/api")),
+    servers((url = "/")),
     modifiers(&AddSecurity)
 )]
 pub struct ApiDoc;

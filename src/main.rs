@@ -1,7 +1,7 @@
 use std::{env, fs::read_to_string, os::unix::fs::PermissionsExt};
 
 use crate::config::Config;
-use crate::docs::ApiDoc;
+use crate::docs::{ApiDoc, doc_add_prefix};
 use actix_files as af;
 use actix_web::{
     get,
@@ -13,6 +13,7 @@ use actix_web::{
 use sqlx::{Pool, Sqlite, SqlitePool};
 use utoipa::OpenApi;
 
+mod admin;
 mod api;
 mod config;
 mod docs;
@@ -30,12 +31,20 @@ async fn index() -> impl Responder {
     HttpResponse::Ok().content_type(ContentType::html()).body(result)
 }
 
-
 #[get("/openapi.json")]
 async fn openapi() -> impl Responder {
     let mut doc = ApiDoc::openapi();
     doc.merge(api::user::ApiUserDoc::openapi());
     doc.merge(api::verification::ApiVerificationDoc::openapi());
+
+    let mut admin_doc = ApiDoc::openapi();
+    admin_doc.merge(admin::user::Doc::openapi());
+
+    doc_add_prefix(&mut admin_doc, "/admin", false);
+
+    doc.merge(admin_doc);
+
+    doc_add_prefix(&mut doc, "/api", false);
 
     HttpResponse::Ok().json(doc)
 }
@@ -92,7 +101,8 @@ async fn main() -> std::io::Result<()> {
             .service(
                 scope("/api")
                     .service(api::user::router())
-                    .service(api::verification::verification),
+                    .service(api::verification::verification)
+                    .service(scope("/admin").service(admin::user::router())),
             )
     });
 

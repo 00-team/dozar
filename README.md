@@ -7,7 +7,7 @@
     -   [x] update
     -   [x] update/delete picture
     -   [ ] add to wallet
-    -   [ ] transactions
+    -   [x] transactions
 -   [ ] products api
     -   [ ] list
     -   [ ] get
