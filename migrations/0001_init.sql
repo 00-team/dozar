@@ -8,7 +8,8 @@ create table if not exists users (
     token text not null,
     photo text,
     admin boolean not null default false,
-    addr text not null default "{}"
+    addr text not null default "{}",
+    banned boolean not null default false
 );
 
 create table if not exists transactions (

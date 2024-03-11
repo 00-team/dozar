@@ -29,7 +29,7 @@ pub struct Address {
     pub state: String,
     pub city: String,
     pub postal: String,
-    pub detail: String
+    pub detail: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema, Default)]
@@ -42,6 +42,7 @@ pub struct User {
     pub token: String,
     pub photo: Option<String>,
     pub admin: bool,
+    pub banned: bool,
     #[schema(value_type = Address)]
     pub addr: JsonStr<Address>,
 }
@@ -96,6 +97,10 @@ impl FromRequest for User {
 
             match result {
                 Ok(mut user) => {
+                    if user.banned {
+                        return Err(error::ErrorForbidden("banned"));
+                    }
+
                     user.token = user.token[..32].to_string();
                     Ok(user)
                 }

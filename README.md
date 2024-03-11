@@ -14,4 +14,9 @@
     -   [ ] biding
 -   [ ] admin api
     -   [ ] user
+        -   [x] list
+        -   [ ] get
+        -   [ ] update
+        -   [ ] delete
+        -   [ ] ban
     -   [ ] product
