@@ -98,7 +98,7 @@ impl FromRequest for User {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema)]
 pub struct Transaction {
     pub id: i64,
     pub user: i64,

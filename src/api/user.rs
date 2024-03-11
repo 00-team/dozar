@@ -1,6 +1,6 @@
 use actix_multipart::form::tempfile::TempFile;
 use actix_multipart::form::MultipartForm;
-use actix_web::web::{Data, Json};
+use actix_web::web::{Data, Json, Query};
 use actix_web::{
     delete, get, patch, post, put, HttpResponse, Responder, Scope,
 };
@@ -12,7 +12,7 @@ use utoipa::{OpenApi, ToSchema};
 use crate::api::verification::verify;
 use crate::config::Config;
 use crate::docs::UpdatePaths;
-use crate::models::{Action, Address, JsonStr, User};
+use crate::models::{Action, Address, JsonStr, Transaction, User};
 use crate::utils::{get_random_bytes, get_random_string, save_photo};
 use crate::AppState;
 
@@ -21,9 +21,11 @@ use crate::AppState;
     tags((name = "api::user")),
     paths(
         login, user_get, user_update, user_update_photo,
-        user_delete_photo, user_wallet_test
+        user_delete_photo, user_wallet_test, user_transactions_list
     ),
-    components(schemas(User, LoginBody, UpdateBody, Address, UpdatePhoto)),
+    components(schemas(
+        User, LoginBody, UpdateBody, Address, UpdatePhoto, Transaction
+    )),
     servers((url = "/user")),
     modifiers(&UpdatePaths)
 )]
@@ -264,14 +266,16 @@ async fn user_wallet_test(user: User, state: Data<AppState>) -> impl Responder {
         callback: String,
     }
 
-    let result = request.send_json(&Data {
-        order_id: "12".to_string(),
-        amount: 12002,
-        name: None,
-        phone: user.phone,
-        desc: "Adding to Wallet".to_string(),
-        callback: "http://127.0.0.1:7200/user/wallet/cb/".to_string()
-    }).await;
+    let result = request
+        .send_json(&Data {
+            order_id: "12".to_string(),
+            amount: 12002,
+            name: None,
+            phone: user.phone,
+            desc: "Adding to Wallet".to_string(),
+            callback: "http://127.0.0.1:7200/user/wallet/cb/".to_string(),
+        })
+        .await;
 
     match result {
         Ok(mut v) => {
@@ -288,6 +292,40 @@ async fn user_wallet_test(user: User, state: Data<AppState>) -> impl Responder {
     HttpResponse::Ok()
 }
 
+#[derive(Deserialize)]
+struct ListInput {
+    page: u32,
+}
+
+#[utoipa::path(
+    get,
+    params(("page" = u32, Query,)),
+    responses(
+        (status = 200, body = Vec<Transaction>)
+    )
+)]
+#[get("/transactions/")]
+async fn user_transactions_list(
+    user: User, query: Query<ListInput>, state: Data<AppState>,
+) -> impl Responder {
+    let offset = query.page * 30;
+    let result = sqlx::query_as! {
+        Transaction,
+        "select * from transactions where user = ? limit 30 offset ?",
+        user.id, offset
+    }
+    .fetch_all(&state.sql)
+    .await;
+
+    match result {
+        Ok(v) => HttpResponse::Ok().json(v),
+        Err(e) => {
+            log::error!("error: {e}");
+            HttpResponse::InternalServerError().body("database failed")
+        }
+    }
+}
+
 pub fn router() -> Scope {
     Scope::new("/user")
         .service(login)
@@ -296,4 +334,5 @@ pub fn router() -> Scope {
         .service(user_update_photo)
         .service(user_delete_photo)
         .service(user_wallet_test)
+        .service(user_transactions_list)
 }
