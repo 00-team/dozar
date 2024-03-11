@@ -3,7 +3,6 @@ use actix_web::{
     web::{Data, Json},
     HttpResponse, Responder,
 };
-use rand::Rng;
 use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Sqlite};
 use utoipa::{OpenApi, ToSchema};
