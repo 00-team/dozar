@@ -1,29 +1,25 @@
-use std::io;
-use std::path::Path;
-
 use actix_multipart::form::tempfile::TempFile;
 use actix_multipart::form::MultipartForm;
 use actix_web::web::{Data, Json};
 use actix_web::{
     delete, get, patch, post, put, HttpResponse, Responder, Scope,
 };
-use image::io::Reader as ImageReader;
-use image::ImageFormat;
 use serde::Deserialize;
 use sha2::{Digest, Sha512};
+use std::path::Path;
 use utoipa::{OpenApi, ToSchema};
 
 use crate::api::verification::verify;
 use crate::config::Config;
 use crate::docs::UpdatePaths;
 use crate::models::{Action, Address, JsonStr, User};
-use crate::utils::{get_random_bytes, get_random_string};
+use crate::utils::{get_random_bytes, get_random_string, save_photo};
 use crate::AppState;
 
 #[derive(OpenApi)]
 #[openapi(
     tags((name = "api::user")),
-    paths(login, user_get, user_update, user_update_photo),
+    paths(login, user_get, user_update, user_update_photo, user_delete_photo),
     components(schemas(User, LoginBody, UpdateBody, Address, UpdatePhoto)),
     servers((url = "/user")),
     modifiers(&UpdatePaths)
@@ -192,7 +188,7 @@ async fn user_update_photo(
         Ok(_) => {}
         Err(e) => {
             log::error!("{e}");
-            return HttpResponse::BadRequest().body("invalid photo")
+            return HttpResponse::BadRequest().body("invalid photo");
         }
     }
 
@@ -207,20 +203,38 @@ async fn user_update_photo(
     HttpResponse::Ok().json(user)
 }
 
-fn save_photo(path: &Path, name: &str) -> io::Result<()> {
-    let img = ImageReader::open(path)?
-        .with_guessed_format()?
-        .decode()
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+#[utoipa::path(
+    delete,
+    responses(
+        (status = 200)
+    )
+)]
+#[delete("/photo/")]
+async fn user_delete_photo(
+    user: User, state: Data<AppState>,
+) -> impl Responder {
+    let mut user = user;
 
-    img.thumbnail(512, 512)
-        .save_with_format(
-            Path::new(Config::RECORD_DIR).join(name),
-            ImageFormat::Png,
-        )
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+    if user.photo.is_none() {
+        return HttpResponse::Ok();
+    }
 
-    Ok(())
+    let _ = std::fs::remove_file(Path::new(Config::RECORD_DIR).join(format!(
+        "{}-{}",
+        user.id,
+        user.photo.unwrap()
+    )));
+    user.photo = None;
+
+    let _ = sqlx::query_as! {
+        User,
+        "update users set photo = ? where id = ?",
+        user.photo, user.id
+    }
+    .execute(&state.sql)
+    .await;
+
+    HttpResponse::Ok()
 }
 
 pub fn router() -> Scope {
@@ -229,4 +243,5 @@ pub fn router() -> Scope {
         .service(user_get)
         .service(user_update)
         .service(user_update_photo)
+        .service(user_delete_photo)
 }

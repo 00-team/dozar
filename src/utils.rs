@@ -1,4 +1,9 @@
 use rand::Rng;
+use std::path::Path;
+use std::io;
+use image::io::Reader as ImageReader;
+use image::ImageFormat;
+use crate::config::Config;
 
 pub fn phone_validator(phone: &str) -> bool {
     if phone.len() != 11 || !phone.starts_with("09") {
@@ -24,4 +29,20 @@ pub fn get_random_string(charset: &[u8], len: usize) -> String {
 pub fn get_random_bytes(len: usize) -> String {
     let mut rng = rand::thread_rng();
     hex::encode((0..len).map(|_| rng.gen::<u8>()).collect::<Vec<u8>>())
+}
+
+pub fn save_photo(path: &Path, name: &str) -> io::Result<()> {
+    let img = ImageReader::open(path)?
+        .with_guessed_format()?
+        .decode()
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+
+    img.thumbnail(512, 512)
+        .save_with_format(
+            Path::new(Config::RECORD_DIR).join(name),
+            ImageFormat::Png,
+        )
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+
+    Ok(())
 }
