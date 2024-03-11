@@ -18,4 +18,4 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          script: bash /dozar/config/deploy.sh
+          script: bash /dozar/config/deploy.sh &
