@@ -4,7 +4,7 @@ use actix_web::web::{Data, Json};
 use actix_web::{
     delete, get, patch, post, put, HttpResponse, Responder, Scope,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha512};
 use std::path::Path;
 use utoipa::{OpenApi, ToSchema};
@@ -19,7 +19,10 @@ use crate::AppState;
 #[derive(OpenApi)]
 #[openapi(
     tags((name = "api::user")),
-    paths(login, user_get, user_update, user_update_photo, user_delete_photo),
+    paths(
+        login, user_get, user_update, user_update_photo,
+        user_delete_photo, user_wallet_test
+    ),
     components(schemas(User, LoginBody, UpdateBody, Address, UpdatePhoto)),
     servers((url = "/user")),
     modifiers(&UpdatePaths)
@@ -237,6 +240,54 @@ async fn user_delete_photo(
     HttpResponse::Ok()
 }
 
+#[utoipa::path(
+    post,
+    responses(
+        (status = 200)
+    )
+)]
+#[post("/wallet/")]
+async fn user_wallet_test(user: User, state: Data<AppState>) -> impl Responder {
+    let client = awc::Client::new();
+    let request = client
+        .post("https://api.idpay.ir/v1.1/payment")
+        .insert_header(("X-SANDBOX", "1"))
+        .insert_header(("X-API-KEY", "..."));
+
+    #[derive(Serialize, Debug)]
+    struct Data {
+        order_id: String,
+        amount: u64,
+        name: Option<String>,
+        phone: String,
+        desc: String,
+        callback: String,
+    }
+
+    let result = request.send_json(&Data {
+        order_id: "12".to_string(),
+        amount: 12002,
+        name: None,
+        phone: user.phone,
+        desc: "Adding to Wallet".to_string(),
+        callback: "http://127.0.0.1:7200/user/wallet/cb/".to_string()
+    }).await;
+
+    match result {
+        Ok(mut v) => {
+            println!("status: {}", v.status());
+            let body = v.json::<serde_json::Value>().await;
+            println!("{:?} {:?}", v, body);
+        }
+        Err(e) => {
+            log::error!("{}", e);
+            return HttpResponse::InternalServerError();
+        }
+    }
+
+    HttpResponse::Ok()
+}
+
 pub fn router() -> Scope {
     Scope::new("/user")
         .service(login)
@@ -244,4 +295,5 @@ pub fn router() -> Scope {
         .service(user_update)
         .service(user_update_photo)
         .service(user_delete_photo)
+        .service(user_wallet_test)
 }
