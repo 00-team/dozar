@@ -30,10 +30,6 @@ async fn index() -> impl Responder {
     HttpResponse::Ok().content_type(ContentType::html()).body(result)
 }
 
-#[get("/958032.txt")]
-async fn gg() -> impl Responder {
-    HttpResponse::Ok()
-}
 
 #[get("/openapi.json")]
 async fn openapi() -> impl Responder {
@@ -93,7 +89,6 @@ async fn main() -> std::io::Result<()> {
             .service(openapi)
             .service(rapidoc)
             .service(index)
-            .service(gg)
             .service(
                 scope("/api")
                     .service(api::user::router())
