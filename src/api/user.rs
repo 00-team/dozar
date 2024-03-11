@@ -1,9 +1,14 @@
+use std::io;
+use std::path::Path;
+
 use actix_multipart::form::tempfile::TempFile;
 use actix_multipart::form::MultipartForm;
 use actix_web::web::{Data, Json};
 use actix_web::{
     delete, get, patch, post, put, HttpResponse, Responder, Scope,
 };
+use image::io::Reader as ImageReader;
+use image::ImageFormat;
 use serde::Deserialize;
 use sha2::{Digest, Sha512};
 use utoipa::{OpenApi, ToSchema};
@@ -156,7 +161,7 @@ async fn user_update(
 #[derive(Debug, MultipartForm, ToSchema)]
 struct UpdatePhoto {
     #[schema(value_type = String, format = Binary)]
-    #[multipart(limit = "18 MiB")]
+    #[multipart(limit = "8 MiB")]
     photo: TempFile,
 }
 
@@ -173,42 +178,49 @@ async fn user_update_photo(
 ) -> impl Responder {
     let mut user = user;
 
-    let salt = if let Some(p) = &user.photo { p.clone() } else { get_random_bytes(8) };
-    println!("{salt}");
+    let salt = if let Some(p) = &user.photo {
+        p.clone()
+    } else {
+        let s = get_random_bytes(8);
+        user.photo = Some(s.clone());
+        s
+    };
 
-    Config::RECORD_DIR;
-    println!("{:#?}", form.photo);
-    // let mut change = false;
-    // if let Some(n) = &body.name {
-    //     change = true;
-    //     user.name = Some(n.clone());
-    // };
-    //
-    // if let Some(a) = &body.addr {
-    //     change = true;
-    //     user.addr = JsonStr(a.clone());
-    // };
+    let filename = format!("{}-{salt}", user.id);
 
-    // if change {
-    //     if let Some(n) = user.name {
-    //         user.name = Some(n[..255].to_string());
-    //     }
-    //     user.addr.country = user.addr.country[..255].to_string();
-    //     user.addr.state = user.addr.state[..255].to_string();
-    //     user.addr.city = user.addr.city[..255].to_string();
-    //     user.addr.postal = user.addr.postal[..20].to_string();
-    //     user.addr.detail = user.addr.detail[..2047].to_string();
-    //
-    //     let _ = sqlx::query_as! {
-    //         User,
-    //         "update users set name = ? , addr = ? where id = ?",
-    //         user.name, user.addr, user.id
-    //     }
-    //     .execute(&state.sql)
-    //     .await;
-    // }
+    match save_photo(form.photo.file.path(), &filename) {
+        Ok(_) => {}
+        Err(e) => {
+            log::error!("{e}");
+            return HttpResponse::BadRequest().body("invalid photo")
+        }
+    }
+
+    let _ = sqlx::query_as! {
+        User,
+        "update users set photo = ? where id = ?",
+        user.photo, user.id
+    }
+    .execute(&state.sql)
+    .await;
 
     HttpResponse::Ok().json(user)
+}
+
+fn save_photo(path: &Path, name: &str) -> io::Result<()> {
+    let img = ImageReader::open(path)?
+        .with_guessed_format()?
+        .decode()
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+
+    img.thumbnail(512, 512)
+        .save_with_format(
+            Path::new(Config::RECORD_DIR).join(name),
+            ImageFormat::Png,
+        )
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+
+    Ok(())
 }
 
 pub fn router() -> Scope {
