@@ -5,8 +5,7 @@ on:
     branches:
       - main
     paths:
-      - Cargo.toml
-      - package.json
+      - VERSION
 
 jobs:
   deploy:
