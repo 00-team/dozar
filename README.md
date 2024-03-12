@@ -15,8 +15,8 @@
 -   [ ] admin api
     -   [ ] user
         -   [x] list
-        -   [ ] get
-        -   [ ] update
-        -   [ ] delete
-        -   [ ] ban
+        -   [x] get
+        -   [x] update
+        -   [ ] delete?
+        -   [x] ban
     -   [ ] product

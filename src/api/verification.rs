@@ -44,6 +44,7 @@ struct VerificationResponse {
         (status = 200, body = VerificationResponse)
     )
 )]
+/// Verification
 #[post("/verification/")]
 async fn verification(
     body: Json<VerificationData>, state: Data<AppState>,

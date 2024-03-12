@@ -45,6 +45,7 @@ struct LoginBody {
         (status = 400, body = String)
     )
 )]
+/// Login
 #[post("/login/")]
 async fn login(body: Json<LoginBody>, state: Data<AppState>) -> impl Responder {
     if !verify(&body.phone, &body.code, Action::Login, &state.sql).await {
@@ -103,6 +104,7 @@ async fn login(body: Json<LoginBody>, state: Data<AppState>) -> impl Responder {
         (status = 200, body = User)
     )
 )]
+/// Get User
 #[get("/")]
 async fn user_get(user: User) -> impl Responder {
     HttpResponse::Ok().json(user)
@@ -121,6 +123,7 @@ struct UpdateBody {
         (status = 200, body = User)
     )
 )]
+/// Update User
 #[patch("/")]
 async fn user_update(
     user: User, body: Json<UpdateBody>, state: Data<AppState>,
@@ -171,6 +174,7 @@ struct UpdatePhoto {
         (status = 200, body = User)
     )
 )]
+/// Update Photo
 #[put("/photo/")]
 async fn user_update_photo(
     user: User, form: MultipartForm<UpdatePhoto>, state: Data<AppState>,
@@ -212,6 +216,7 @@ async fn user_update_photo(
         (status = 200)
     )
 )]
+/// Delete Photo
 #[delete("/photo/")]
 async fn user_delete_photo(
     user: User, state: Data<AppState>,
@@ -246,6 +251,7 @@ async fn user_delete_photo(
         (status = 200)
     )
 )]
+/// Add Wallet
 #[post("/wallet/")]
 async fn user_wallet_test(user: User, _state: Data<AppState>) -> impl Responder {
     let client = awc::Client::new();
@@ -298,6 +304,7 @@ async fn user_wallet_test(user: User, _state: Data<AppState>) -> impl Responder 
         (status = 200, body = Vec<Transaction>)
     )
 )]
+/// Transaction List 
 #[get("/transactions/")]
 async fn user_transactions_list(
     user: User, query: Query<ListInput>, state: Data<AppState>,

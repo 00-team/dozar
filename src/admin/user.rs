@@ -4,14 +4,14 @@ use serde::Deserialize;
 use utoipa::{OpenApi, ToSchema};
 
 use crate::docs::UpdatePaths;
-use crate::models::{Admin, ListInput, User};
+use crate::models::{Admin, ListInput, Transaction, User};
 use crate::utils::CutOff;
 use crate::AppState;
 
 #[derive(OpenApi)]
 #[openapi(
     tags((name = "admin::user")),
-    paths(user_list, user_get, user_update),
+    paths(user_list, user_get, user_update, user_transactions_list),
     components(schemas(User, AdminUpdateBody)),
     servers((url = "/users")),
     modifiers(&UpdatePaths)
@@ -25,6 +25,7 @@ pub struct Doc;
         (status = 200, body = Vec<User>)
     )
 )]
+/// User List
 #[get("/")]
 async fn user_list(
     _: Admin, query: Query<ListInput>, state: Data<AppState>,
@@ -55,6 +56,7 @@ async fn user_list(
         (status = 200, body = User)
     )
 )]
+/// User Get
 #[get("/{id}/")]
 async fn user_get(
     _: Admin, path: Path<(i64,)>, state: Data<AppState>,
@@ -98,9 +100,11 @@ struct AdminUpdateBody {
         (status = 200, body = User)
     )
 )]
+/// User Update
 #[patch("/{id}/")]
 async fn user_update(
-    admin: Admin, path: Path<(i64,)>, body: Json<AdminUpdateBody>, state: Data<AppState>,
+    admin: Admin, path: Path<(i64,)>, body: Json<AdminUpdateBody>,
+    state: Data<AppState>,
 ) -> impl Responder {
     let (id,) = path.into_inner();
     let mut change = false;
@@ -154,6 +158,41 @@ async fn user_update(
     HttpResponse::Ok().json(user)
 }
 
+#[utoipa::path(
+    get,
+    params(("page" = u32, Query,)),
+    responses(
+        (status = 200, body = Vec<Transaction>)
+    ),
+)]
+/// Transaction List
+#[get("/{id}/transactions/")]
+async fn user_transactions_list(
+    _: Admin, path: Path<(i64,)>, query: Query<ListInput>,
+    state: Data<AppState>,
+) -> impl Responder {
+    let offset = query.page * 30;
+    let result = sqlx::query_as! {
+        Transaction,
+        "select * from transactions where user = ? limit 30 offset ?",
+        path.0, offset
+    }
+    .fetch_all(&state.sql)
+    .await;
+
+    match result {
+        Ok(v) => HttpResponse::Ok().json(v),
+        Err(e) => {
+            log::error!("error: {e}");
+            HttpResponse::InternalServerError().body("database failed")
+        }
+    }
+}
+
 pub fn router() -> Scope {
-    Scope::new("/users").service(user_list).service(user_get).service(user_update)
+    Scope::new("/users")
+        .service(user_list)
+        .service(user_get)
+        .service(user_update)
+        .service(user_transactions_list)
 }
