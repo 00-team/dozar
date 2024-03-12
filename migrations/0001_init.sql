@@ -33,7 +33,7 @@ create table if not exists products (
     end integer not null,
     start integer not null,
     base_price integer not null default 0,
-    photos text not null default "[]",
+    photos text not null default "{}",
     buy_now_opens integer,
     buy_now_price integer
 );
