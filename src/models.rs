@@ -3,6 +3,7 @@
 
 use std::{future::Future, ops, pin::Pin};
 
+use actix_multipart::form::{tempfile::TempFile, MultipartForm};
 use actix_web::{dev::Payload, error, web::Data, FromRequest, HttpRequest};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -19,6 +20,13 @@ use crate::{utils::CutOff, AppState};
 #[derive(Deserialize)]
 pub struct ListInput {
     pub page: u32,
+}
+
+#[derive(Debug, MultipartForm, ToSchema)]
+pub struct UpdatePhoto {
+    #[schema(value_type = String, format = Binary)]
+    #[multipart(limit = "8 MiB")]
+    pub photo: TempFile,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema, Default)]
@@ -118,7 +126,7 @@ impl FromRequest for User {
                     user.token.cut_off(32);
                     Ok(user)
                 }
-                Err(_) => Err(error::ErrorForbidden("not found")),
+                Err(_) => Err(error::ErrorForbidden("user not found")),
             }
         })
     }
@@ -156,7 +164,12 @@ pub struct Transaction {
     pub bank_track_id: Option<i64>,
 }
 
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+#[derive(Debug, Serialize, Deserialize, ToSchema, Default)]
+pub struct Photos {
+    pub salts: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema, Default)]
 pub struct Product {
     pub id: i64,
     pub title: String,
@@ -164,7 +177,7 @@ pub struct Product {
     pub end: i64,
     pub start: i64,
     pub base_price: i64,
-    pub photos: Vec<String>,
+    pub photos: JsonStr<Photos>,
     pub buy_now_opens: Option<i64>,
     pub buy_now_price: Option<i64>,
 }

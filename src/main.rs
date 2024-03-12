@@ -1,7 +1,7 @@
 use std::{env, fs::read_to_string, os::unix::fs::PermissionsExt};
 
 use crate::config::Config;
-use crate::docs::{ApiDoc, doc_add_prefix};
+use crate::docs::{doc_add_prefix, ApiDoc};
 use actix_files as af;
 use actix_web::{
     get,
@@ -39,6 +39,7 @@ async fn openapi() -> impl Responder {
 
     let mut admin_doc = ApiDoc::openapi();
     admin_doc.merge(admin::user::Doc::openapi());
+    admin_doc.merge(admin::product::Doc::openapi());
 
     doc_add_prefix(&mut admin_doc, "/admin", false);
 
@@ -102,7 +103,11 @@ async fn main() -> std::io::Result<()> {
                 scope("/api")
                     .service(api::user::router())
                     .service(api::verification::verification)
-                    .service(scope("/admin").service(admin::user::router())),
+                    .service(
+                        scope("/admin")
+                            .service(admin::user::router())
+                            .service(admin::product::router()),
+                    ),
             )
     });
 

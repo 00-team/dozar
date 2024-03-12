@@ -12,7 +12,7 @@ use crate::AppState;
 #[openapi(
     tags((name = "admin::user")),
     paths(user_list, user_get, user_update, user_transactions_list),
-    components(schemas(User, AdminUpdateBody)),
+    components(schemas(User, AdminUserUpdateBody)),
     servers((url = "/users")),
     modifiers(&UpdatePaths)
 )]
@@ -20,7 +20,7 @@ pub struct Doc;
 
 #[utoipa::path(
     get,
-    params(("page" = u32, Query,)),
+    params(("page" = u32, Query, example = 0)),
     responses(
         (status = 200, body = Vec<User>)
     )
@@ -87,7 +87,7 @@ async fn user_get(
 }
 
 #[derive(Deserialize, ToSchema)]
-struct AdminUpdateBody {
+struct AdminUserUpdateBody {
     banned: Option<bool>,
     name: Option<String>,
 }
@@ -95,7 +95,7 @@ struct AdminUpdateBody {
 #[utoipa::path(
     patch,
     params(("id" = i64, Path,)),
-    request_body = AdminUpdateBody,
+    request_body = AdminUserUpdateBody,
     responses(
         (status = 200, body = User)
     )
@@ -103,7 +103,7 @@ struct AdminUpdateBody {
 /// User Update
 #[patch("/{id}/")]
 async fn user_update(
-    admin: Admin, path: Path<(i64,)>, body: Json<AdminUpdateBody>,
+    admin: Admin, path: Path<(i64,)>, body: Json<AdminUserUpdateBody>,
     state: Data<AppState>,
 ) -> impl Responder {
     let (id,) = path.into_inner();
@@ -160,7 +160,7 @@ async fn user_update(
 
 #[utoipa::path(
     get,
-    params(("page" = u32, Query,)),
+    params(("page" = u32, Query, example = 0)),
     responses(
         (status = 200, body = Vec<Transaction>)
     ),

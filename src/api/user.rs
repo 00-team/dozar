@@ -1,4 +1,3 @@
-use actix_multipart::form::tempfile::TempFile;
 use actix_multipart::form::MultipartForm;
 use actix_web::web::{Data, Json, Query};
 use actix_web::{
@@ -12,7 +11,7 @@ use utoipa::{OpenApi, ToSchema};
 use crate::api::verification::verify;
 use crate::config::Config;
 use crate::docs::UpdatePaths;
-use crate::models::{Action, Address, JsonStr, ListInput, Transaction, User};
+use crate::models::{Action, Address, JsonStr, ListInput, Transaction, UpdatePhoto, User};
 use crate::utils::{get_random_bytes, get_random_string, save_photo, CutOff};
 use crate::AppState;
 
@@ -24,7 +23,7 @@ use crate::AppState;
         user_delete_photo, user_wallet_test, user_transactions_list
     ),
     components(schemas(
-        User, LoginBody, UpdateBody, Address, UpdatePhoto, Transaction
+        User, LoginBody, UserUpdateBody, Address, UpdatePhoto, Transaction
     )),
     servers((url = "/user")),
     modifiers(&UpdatePaths)
@@ -111,14 +110,14 @@ async fn user_get(user: User) -> impl Responder {
 }
 
 #[derive(Deserialize, ToSchema)]
-struct UpdateBody {
+struct UserUpdateBody {
     name: Option<String>,
     addr: Option<Address>,
 }
 
 #[utoipa::path(
     patch,
-    request_body = UpdateBody,
+    request_body = UserUpdateBody,
     responses(
         (status = 200, body = User)
     )
@@ -126,7 +125,7 @@ struct UpdateBody {
 /// Update User
 #[patch("/")]
 async fn user_update(
-    user: User, body: Json<UpdateBody>, state: Data<AppState>,
+    user: User, body: Json<UserUpdateBody>, state: Data<AppState>,
 ) -> impl Responder {
     let mut user = user;
     let mut change = false;
@@ -160,12 +159,6 @@ async fn user_update(
     HttpResponse::Ok().json(user)
 }
 
-#[derive(Debug, MultipartForm, ToSchema)]
-struct UpdatePhoto {
-    #[schema(value_type = String, format = Binary)]
-    #[multipart(limit = "8 MiB")]
-    photo: TempFile,
-}
 
 #[utoipa::path(
     put,
@@ -299,7 +292,7 @@ async fn user_wallet_test(user: User, _state: Data<AppState>) -> impl Responder 
 
 #[utoipa::path(
     get,
-    params(("page" = u32, Query,)),
+    params(("page" = u32, Query, example = 0)),
     responses(
         (status = 200, body = Vec<Transaction>)
     )
