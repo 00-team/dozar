@@ -19,4 +19,4 @@
         -   [x] update
         -   [ ] delete?
         -   [x] ban
-    -   [ ] product
+    -   [x] product

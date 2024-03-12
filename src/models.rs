@@ -223,7 +223,7 @@ impl FromRequest for Product {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema)]
 pub struct Offer {
     pub id: i64,
     pub product: i64,

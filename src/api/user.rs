@@ -5,7 +5,6 @@ use actix_web::{
 };
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha512};
-use std::path::Path;
 use utoipa::{OpenApi, ToSchema};
 
 use crate::api::verification::verify;
