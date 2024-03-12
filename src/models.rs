@@ -14,7 +14,7 @@ use sqlx::{
 };
 use utoipa::ToSchema;
 
-use crate::AppState;
+use crate::{utils::CutOff, AppState};
 
 #[derive(Deserialize)]
 pub struct ListInput {
@@ -48,6 +48,20 @@ pub struct User {
 }
 
 pub struct Admin(pub User);
+
+impl ops::Deref for Admin {
+    type Target = User;
+
+    fn deref(&self) -> &User {
+        &self.0
+    }
+}
+
+impl ops::DerefMut for Admin {
+    fn deref_mut(&mut self) -> &mut User {
+        &mut self.0
+    }
+}
 
 fn parse_token(token: &str) -> Option<(i64, String)> {
     let mut token = token.splitn(2, ':');
@@ -101,7 +115,7 @@ impl FromRequest for User {
                         return Err(error::ErrorForbidden("banned"));
                     }
 
-                    user.token = user.token[..32].to_string();
+                    user.token.cut_off(32);
                     Ok(user)
                 }
                 Err(_) => Err(error::ErrorForbidden("not found")),

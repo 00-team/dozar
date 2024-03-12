@@ -74,3 +74,35 @@ pub async fn send_webhook(title: &str, desc: &str, color: u32) {
         })
         .await;
 }
+
+pub trait CutOff {
+    fn cut_off(&mut self, len: usize);
+}
+
+impl CutOff for String {
+    fn cut_off(&mut self, len: usize) {
+        let mut idx = len;
+        loop {
+            if self.is_char_boundary(idx) {
+                break;
+            }
+            idx -= 1;
+        }
+        self.truncate(idx)
+    }
+}
+
+impl CutOff for Option<String> {
+    fn cut_off(&mut self, len: usize) {
+        if let Some(v) = self {
+            let mut idx = len;
+            loop {
+                if v.is_char_boundary(idx) {
+                    break;
+                }
+                idx -= 1;
+            }
+            v.truncate(idx)
+        }
+    }
+}

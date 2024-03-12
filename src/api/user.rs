@@ -13,7 +13,7 @@ use crate::api::verification::verify;
 use crate::config::Config;
 use crate::docs::UpdatePaths;
 use crate::models::{Action, Address, JsonStr, ListInput, Transaction, User};
-use crate::utils::{get_random_bytes, get_random_string, save_photo};
+use crate::utils::{get_random_bytes, get_random_string, save_photo, CutOff};
 use crate::AppState;
 
 #[derive(OpenApi)]
@@ -138,14 +138,12 @@ async fn user_update(
     };
 
     if change {
-        if let Some(n) = user.name {
-            user.name = Some(n[..255].to_string());
-        }
-        user.addr.country = user.addr.country[..255].to_string();
-        user.addr.state = user.addr.state[..255].to_string();
-        user.addr.city = user.addr.city[..255].to_string();
-        user.addr.postal = user.addr.postal[..20].to_string();
-        user.addr.detail = user.addr.detail[..2047].to_string();
+        user.name.cut_off(100);
+        user.addr.country.cut_off(100);
+        user.addr.state.cut_off(100);
+        user.addr.city.cut_off(100);
+        user.addr.postal.cut_off(10);
+        user.addr.detail.cut_off(2048);
 
         let _ = sqlx::query_as! {
             User,
