@@ -48,6 +48,10 @@ pub fn save_photo(path: &Path, name: &str) -> io::Result<()> {
     Ok(())
 }
 
+pub fn remove_photo(name: &str) {
+    let _ = std::fs::remove_file(Path::new(Config::RECORD_DIR).join(name));
+}
+
 pub async fn send_webhook(title: &str, desc: &str, color: u32) {
     let client = awc::Client::new();
     let request = client.post(&config().discord_webhook);

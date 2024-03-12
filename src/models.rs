@@ -4,7 +4,12 @@
 use std::{future::Future, ops, pin::Pin};
 
 use actix_multipart::form::{tempfile::TempFile, MultipartForm};
-use actix_web::{dev::Payload, error, web::Data, FromRequest, HttpRequest};
+use actix_web::{
+    dev::Payload,
+    error,
+    web::{Data, Path},
+    FromRequest, HttpRequest,
+};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use sha2::Digest;
@@ -180,6 +185,42 @@ pub struct Product {
     pub photos: JsonStr<Photos>,
     pub buy_now_opens: Option<i64>,
     pub buy_now_price: Option<i64>,
+}
+
+impl FromRequest for Product {
+    type Error = error::Error;
+    type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
+
+    fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
+        let path = Path::<(i64,)>::extract(req);
+        let state = req.app_data::<Data<AppState>>().unwrap();
+        let pool = state.sql.clone();
+
+        Box::pin(async move {
+            let path = path.await?;
+            let result = sqlx::query_as! {
+                Product,
+                "select * from products where id = ?",
+                path.0
+            }
+            .fetch_optional(&pool)
+            .await;
+
+            match result {
+                Ok(v) => {
+                    if let Some(v) = v {
+                        Ok(v)
+                    } else {
+                        Err(error::ErrorNotFound("product not found"))
+                    }
+                }
+                Err(e) => {
+                    log::error!("db err: {e}");
+                    Err(error::ErrorInternalServerError("db err"))
+                }
+            }
+        })
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]

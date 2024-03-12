@@ -11,8 +11,12 @@ use utoipa::{OpenApi, ToSchema};
 use crate::api::verification::verify;
 use crate::config::Config;
 use crate::docs::UpdatePaths;
-use crate::models::{Action, Address, JsonStr, ListInput, Transaction, UpdatePhoto, User};
-use crate::utils::{get_random_bytes, get_random_string, save_photo, CutOff};
+use crate::models::{
+    Action, Address, JsonStr, ListInput, Transaction, UpdatePhoto, User,
+};
+use crate::utils::{
+    get_random_bytes, get_random_string, remove_photo, save_photo, CutOff,
+};
 use crate::AppState;
 
 #[derive(OpenApi)]
@@ -159,7 +163,6 @@ async fn user_update(
     HttpResponse::Ok().json(user)
 }
 
-
 #[utoipa::path(
     put,
     request_body(content = UpdatePhoto, content_type = "multipart/form-data"),
@@ -220,11 +223,7 @@ async fn user_delete_photo(
         return HttpResponse::Ok();
     }
 
-    let _ = std::fs::remove_file(Path::new(Config::RECORD_DIR).join(format!(
-        "{}-{}",
-        user.id,
-        user.photo.unwrap()
-    )));
+    remove_photo(&format!("{}-{}", user.id, user.photo.unwrap()));
     user.photo = None;
 
     let _ = sqlx::query_as! {
@@ -246,7 +245,9 @@ async fn user_delete_photo(
 )]
 /// Add Wallet
 #[post("/wallet/")]
-async fn user_wallet_test(user: User, _state: Data<AppState>) -> impl Responder {
+async fn user_wallet_test(
+    user: User, _state: Data<AppState>,
+) -> impl Responder {
     let client = awc::Client::new();
     let request = client
         .post("https://api.idpay.ir/v1.1/payment")
@@ -289,7 +290,6 @@ async fn user_wallet_test(user: User, _state: Data<AppState>) -> impl Responder 
     HttpResponse::Ok()
 }
 
-
 #[utoipa::path(
     get,
     params(("page" = u32, Query, example = 0)),
@@ -297,7 +297,7 @@ async fn user_wallet_test(user: User, _state: Data<AppState>) -> impl Responder 
         (status = 200, body = Vec<Transaction>)
     )
 )]
-/// Transaction List 
+/// Transaction List
 #[get("/transactions/")]
 async fn user_transactions_list(
     user: User, query: Query<ListInput>, state: Data<AppState>,

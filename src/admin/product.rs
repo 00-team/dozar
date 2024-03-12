@@ -1,17 +1,23 @@
+use actix_multipart::form::MultipartForm;
 use actix_web::web::{Data, Json, Path, Query};
-use actix_web::{delete, get, patch, post, HttpResponse, Responder, Scope};
+use actix_web::{
+    delete, get, patch, post, put, HttpResponse, Responder, Scope,
+};
 use serde::Deserialize;
 use utoipa::{OpenApi, ToSchema};
 
 use crate::docs::UpdatePaths;
-use crate::models::{Admin, ListInput, Product};
-use crate::utils::CutOff;
+use crate::models::{Admin, ListInput, Product, UpdatePhoto};
+use crate::utils::{get_random_bytes, remove_photo, save_photo, CutOff};
 use crate::AppState;
 
 #[derive(OpenApi)]
 #[openapi(
     tags((name = "admin::product")),
-    paths(product_list, product_get, product_add, product_update, product_delete),
+    paths(
+        product_list, product_get, product_add, product_update,
+        product_delete, product_add_photo, product_delete_photo
+    ),
     components(schemas(Product, ProductAddBody, ProductUpdateBody)),
     servers((url = "/products")),
     modifiers(&UpdatePaths)
@@ -58,30 +64,8 @@ async fn product_list(
 )]
 /// Product Get
 #[get("/{id}/")]
-async fn product_get(
-    _: Admin, path: Path<(i64,)>, state: Data<AppState>,
-) -> impl Responder {
-    let result = sqlx::query_as! {
-        Product,
-        "select * from products where id = ?",
-        path.0
-    }
-    .fetch_optional(&state.sql)
-    .await;
-
-    match result {
-        Ok(v) => {
-            if let Some(v) = v {
-                HttpResponse::Ok().json(v)
-            } else {
-                HttpResponse::NotFound().body("product not found")
-            }
-        }
-        Err(e) => {
-            log::error!("err: {e}");
-            HttpResponse::InternalServerError().body("db err")
-        }
-    }
+async fn product_get(_: Admin, product: Product) -> impl Responder {
+    HttpResponse::Ok().json(product)
 }
 
 #[derive(Deserialize, ToSchema)]
@@ -156,31 +140,11 @@ struct ProductUpdateBody {
 /// Product Update
 #[patch("/{id}/")]
 async fn product_update(
-    _: Admin, path: Path<(i64,)>, body: Json<ProductUpdateBody>,
+    _: Admin, product: Product, body: Json<ProductUpdateBody>,
     state: Data<AppState>,
 ) -> impl Responder {
     let mut change = false;
-    let result = sqlx::query_as! {
-        Product,
-        "select * from products where id = ?",
-        path.0
-    }
-    .fetch_optional(&state.sql)
-    .await;
-
-    let mut product = match result {
-        Ok(v) => {
-            if let Some(v) = v {
-                v
-            } else {
-                return HttpResponse::NotFound().body("product not found");
-            }
-        }
-        Err(e) => {
-            log::error!("err: {e}");
-            return HttpResponse::InternalServerError().body("db err");
-        }
-    };
+    let mut product = product;
 
     if let Some(title) = &body.title {
         change = true;
@@ -262,12 +226,93 @@ async fn product_delete(
     .await;
 
     match result {
-        Ok(v) => HttpResponse::Ok().body("ok"),
+        Ok(_) => HttpResponse::Ok().body("ok"),
         Err(e) => {
             log::error!("err: {e}");
             HttpResponse::InternalServerError().body("db err")
         }
     }
+}
+
+#[utoipa::path(
+    put,
+    params(("id" = i64, Path,)),
+    request_body(content = UpdatePhoto, content_type = "multipart/form-data"),
+    responses(
+        (status = 200, body = Product)
+    )
+)]
+/// Product Add Photo
+#[put("/{id}/photo/")]
+async fn product_add_photo(
+    _: Admin, product: Product, form: MultipartForm<UpdatePhoto>,
+    state: Data<AppState>,
+) -> impl Responder {
+    let mut product = product;
+    let mut salt = get_random_bytes(8);
+    loop {
+        if !product.photos.salts.iter().any(|s| s == &salt) {
+            break;
+        }
+        salt = get_random_bytes(8);
+    }
+
+    product.photos.salts.push(salt.clone());
+
+    let filename = format!("{}-{}", product.id, salt);
+
+    match save_photo(form.photo.file.path(), &filename) {
+        Ok(..) => {
+            let _ = sqlx::query_as! {
+                Product,
+                "update products set photos = ? where id = ?",
+                product.photos, product.id
+            }
+            .execute(&state.sql)
+            .await;
+        }
+        Err(e) => {
+            log::error!("{e}");
+            return HttpResponse::BadRequest().body("invalid photo");
+        }
+    }
+
+    HttpResponse::Ok().json(product)
+}
+
+#[utoipa::path(
+    delete,
+    params(
+        ("id" = i64, Path,),
+        ("idx" = u8, Path,),
+    ),
+    responses(
+        (status = 200, body = String)
+    )
+)]
+/// Product Delete Photo
+#[delete("/{id}/photo/{idx}/")]
+async fn product_delete_photo(
+    _: Admin, product: Product, path: Path<(i64, u8)>, state: Data<AppState>,
+) -> impl Responder {
+    let mut product = product;
+    let idx: usize = path.1.into();
+    if idx >= product.photos.salts.len() {
+        return HttpResponse::BadRequest().body("photo not found");
+    }
+
+    let salt = product.photos.salts.remove(idx);
+    remove_photo(&format!("{}-{}", product.id, salt));
+
+    let _ = sqlx::query_as! {
+        Product,
+        "update products set photos = ? where id = ?",
+        product.photos, product.id
+    }
+    .execute(&state.sql)
+    .await;
+
+    HttpResponse::Ok().body("photo was removed")
 }
 
 pub fn router() -> Scope {
@@ -277,4 +322,6 @@ pub fn router() -> Scope {
         .service(product_add)
         .service(product_update)
         .service(product_delete)
+        .service(product_add_photo)
+        .service(product_delete_photo)
 }
