@@ -54,3 +54,8 @@ create table if not exists verifications (
     expires integer not null,
     tries integer not null default 0
 );
+
+create table if not exists general (
+    available_money integer not null default 0,
+    total_money integer not null default 0
+);
