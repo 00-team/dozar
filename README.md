@@ -9,8 +9,8 @@
     -   [ ] add to wallet
     -   [x] transactions
 -   [ ] products api
-    -   [ ] list
-    -   [ ] get
+    -   [x] list
+    -   [x] get
     -   [ ] biding
 -   [ ] admin api
     -   [ ] user
