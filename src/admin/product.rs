@@ -7,7 +7,7 @@ use serde::Deserialize;
 use utoipa::{OpenApi, ToSchema};
 
 use crate::docs::UpdatePaths;
-use crate::models::{Admin, ListInput, Product, UpdatePhoto};
+use crate::models::{Admin, ListInput, Product, UpdatePhoto, Photos};
 use crate::utils::{get_random_bytes, remove_photo, save_photo, CutOff};
 use crate::AppState;
 
@@ -18,7 +18,7 @@ use crate::AppState;
         product_list, product_get, product_add, product_update,
         product_delete, product_add_photo, product_delete_photo
     ),
-    components(schemas(Product, ProductAddBody, ProductUpdateBody)),
+    components(schemas(Product, Photos, ProductAddBody, ProductUpdateBody)),
     servers((url = "/products")),
     modifiers(&UpdatePaths)
 )]

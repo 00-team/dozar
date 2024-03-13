@@ -11,10 +11,12 @@ use crate::api::verification::verify;
 use crate::config::Config;
 use crate::docs::UpdatePaths;
 use crate::models::{
-    Action, Address, JsonStr, ListInput, Transaction, UpdatePhoto, User,
+    Action, Address, JsonStr, ListInput, Response, Transaction, UpdatePhoto,
+    User,
 };
 use crate::utils::{
-    get_random_bytes, get_random_string, remove_photo, save_photo, CutOff,
+    get_random_bytes, get_random_string, remove_photo, save_photo, sql_unwrap,
+    CutOff,
 };
 use crate::AppState;
 
@@ -49,10 +51,8 @@ struct LoginBody {
 )]
 /// Login
 #[post("/login/")]
-async fn login(body: Json<LoginBody>, state: Data<AppState>) -> impl Responder {
-    if !verify(&body.phone, &body.code, Action::Login, &state.sql).await {
-        return HttpResponse::BadRequest().body("invalid verification");
-    }
+async fn login(body: Json<LoginBody>, state: Data<AppState>) -> Response<User> {
+    verify(&body.phone, &body.code, Action::Login, &state.sql).await?;
 
     let token = get_random_string(Config::TOKEN_ABC, 69);
     let token_hashed = hex::encode(Sha512::digest(&token));
@@ -97,7 +97,7 @@ async fn login(body: Json<LoginBody>, state: Data<AppState>) -> impl Responder {
         }
     };
 
-    HttpResponse::Ok().json(user)
+    Ok(Json(user))
 }
 
 #[utoipa::path(
@@ -108,8 +108,8 @@ async fn login(body: Json<LoginBody>, state: Data<AppState>) -> impl Responder {
 )]
 /// Get User
 #[get("/")]
-async fn user_get(user: User) -> impl Responder {
-    HttpResponse::Ok().json(user)
+async fn user_get(user: User) -> Json<User> {
+    Json(user)
 }
 
 #[derive(Deserialize, ToSchema)]
@@ -129,7 +129,7 @@ struct UserUpdateBody {
 #[patch("/")]
 async fn user_update(
     user: User, body: Json<UserUpdateBody>, state: Data<AppState>,
-) -> impl Responder {
+) -> Json<User> {
     let mut user = user;
     let mut change = false;
     if let Some(n) = &body.name {
@@ -159,7 +159,7 @@ async fn user_update(
         .await;
     }
 
-    HttpResponse::Ok().json(user)
+    Json(user)
 }
 
 #[utoipa::path(
@@ -173,7 +173,7 @@ async fn user_update(
 #[put("/photo/")]
 async fn user_update_photo(
     user: User, form: MultipartForm<UpdatePhoto>, state: Data<AppState>,
-) -> impl Responder {
+) -> Response<User> {
     let mut user = user;
 
     let salt = if let Some(p) = &user.photo {
@@ -186,23 +186,19 @@ async fn user_update_photo(
 
     let filename = format!("{}-{salt}", user.id);
 
-    match save_photo(form.photo.file.path(), &filename) {
-        Ok(_) => {}
-        Err(e) => {
-            log::error!("{e}");
-            return HttpResponse::BadRequest().body("invalid photo");
+    save_photo(form.photo.file.path(), &filename)?;
+
+    sql_unwrap(
+        sqlx::query_as! {
+            User,
+            "update users set photo = ? where id = ?",
+            user.photo, user.id
         }
-    }
+        .execute(&state.sql)
+        .await,
+    )?;
 
-    let _ = sqlx::query_as! {
-        User,
-        "update users set photo = ? where id = ?",
-        user.photo, user.id
-    }
-    .execute(&state.sql)
-    .await;
-
-    HttpResponse::Ok().json(user)
+    Ok(Json(user))
 }
 
 #[utoipa::path(
@@ -300,23 +296,19 @@ async fn user_wallet_test(
 #[get("/transactions/")]
 async fn user_transactions_list(
     user: User, query: Query<ListInput>, state: Data<AppState>,
-) -> impl Responder {
+) -> Response<Vec<Transaction>> {
     let offset = query.page * 30;
-    let result = sqlx::query_as! {
-        Transaction,
-        "select * from transactions where user = ? limit 30 offset ?",
-        user.id, offset
-    }
-    .fetch_all(&state.sql)
-    .await;
-
-    match result {
-        Ok(v) => HttpResponse::Ok().json(v),
-        Err(e) => {
-            log::error!("error: {e}");
-            HttpResponse::InternalServerError().body("database failed")
+    let result = sql_unwrap(
+        sqlx::query_as! {
+            Transaction,
+            "select * from transactions where user = ? limit 30 offset ?",
+            user.id, offset
         }
-    }
+        .fetch_all(&state.sql)
+        .await,
+    )?;
+
+    Ok(Json(result))
 }
 
 pub fn router() -> Scope {

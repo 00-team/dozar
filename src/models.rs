@@ -7,7 +7,7 @@ use actix_multipart::form::{tempfile::TempFile, MultipartForm};
 use actix_web::{
     dev::Payload,
     error,
-    web::{Data, Path},
+    web::{Data, Path, Json},
     FromRequest, HttpRequest,
 };
 use actix_web_httpauth::extractors::bearer::BearerAuth;
@@ -61,6 +61,8 @@ pub struct User {
 }
 
 pub struct Admin(pub User);
+
+pub type Response<T> = Result<Json<T>, error::Error>;
 
 impl ops::Deref for Admin {
     type Target = User;
@@ -182,6 +184,7 @@ pub struct Product {
     pub end: i64,
     pub start: i64,
     pub base_price: i64,
+    #[schema(value_type = Photos)]
     pub photos: JsonStr<Photos>,
     pub buy_now_opens: Option<i64>,
     pub buy_now_price: Option<i64>,

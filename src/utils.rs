@@ -1,4 +1,7 @@
 use crate::config::{config, Config};
+use actix_web::error::{
+    Error, ErrorBadRequest, ErrorInternalServerError, ErrorNotFound,
+};
 use image::io::Reader as ImageReader;
 use image::ImageFormat;
 use rand::Rng;
@@ -6,16 +9,16 @@ use serde::Serialize;
 use std::io;
 use std::path::Path;
 
-pub fn phone_validator(phone: &str) -> bool {
+pub fn phone_validator(phone: &str) -> Result<(), Error> {
     if phone.len() != 11 || !phone.starts_with("09") {
-        return false;
+        return Err(ErrorBadRequest("invalid phone number"));
     }
 
     if phone.chars().any(|c| !c.is_ascii_digit()) {
-        return false;
+        return Err(ErrorBadRequest("phone number must be all digits"));
     }
 
-    true
+    Ok(())
 }
 
 pub fn now() -> i64 {
@@ -108,5 +111,15 @@ impl CutOff for Option<String> {
             }
             v.truncate(idx)
         }
+    }
+}
+
+pub fn sql_unwrap<T>(value: Result<T, sqlx::Error>) -> Result<T, Error> {
+    match value {
+        Ok(v) => Ok(v),
+        Err(e) => match e {
+            sqlx::Error::RowNotFound => Err(ErrorNotFound("value not found")),
+            _ => Err(ErrorInternalServerError("database error")),
+        },
     }
 }

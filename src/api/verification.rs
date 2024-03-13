@@ -1,7 +1,7 @@
 use actix_web::{
+    error::{Error, ErrorBadRequest},
     post,
     web::{Data, Json},
-    HttpResponse, Responder,
 };
 use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Sqlite};
@@ -10,13 +10,13 @@ use utoipa::{OpenApi, ToSchema};
 use crate::{
     config::Config,
     models,
-    utils::{get_random_string, send_webhook},
+    utils::{get_random_string, send_webhook, sql_unwrap},
 };
 use crate::{
-    models::Action,
     utils::{self, phone_validator},
     AppState,
 };
+use models::{Action, Response};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -48,10 +48,8 @@ struct VerificationResponse {
 #[post("/verification/")]
 async fn verification(
     body: Json<VerificationData>, state: Data<AppState>,
-) -> impl Responder {
-    if !phone_validator(&body.phone) {
-        return HttpResponse::BadRequest().body("invalid phone number");
-    }
+) -> Response<VerificationResponse> {
+    phone_validator(&body.phone)?;
 
     let result = sqlx::query_as! {
         models::Verification,
@@ -66,10 +64,10 @@ async fn verification(
         Ok(v) => {
             let t = v.expires - now;
             if t > 0 {
-                return HttpResponse::Ok().json(VerificationResponse {
+                return Ok(Json(VerificationResponse {
                     expires: t,
                     action: v.action,
-                });
+                }));
             }
         }
         Err(_) => {}
@@ -105,65 +103,63 @@ async fn verification(
         body.phone, action, code, expires
     }.execute(&state.sql).await;
 
-    HttpResponse::Ok().json(VerificationResponse {
+    Ok(Json(VerificationResponse {
         expires: 180,
         action: body.action.to_owned(),
-    })
+    }))
 }
 
 pub async fn verify(
     phone: &str, code: &str, action: Action, sql: &Pool<Sqlite>,
-) -> bool {
-    let result = sqlx::query_as! {
-        models::Verification,
-        "select * from verifications where phone = ?",
-        phone
-    }
-    .fetch_one(sql)
-    .await;
+) -> Result<(), Error> {
+    let v = sql_unwrap(
+        sqlx::query_as! {
+            models::Verification,
+            "select * from verifications where phone = ?",
+            phone
+        }
+        .fetch_one(sql)
+        .await,
+    )?;
 
     let now = utils::now();
 
-    match result {
-        Ok(v) => {
-            let tries = v.tries + 1;
-            if v.expires <= now {
-                let _ = sqlx::query! {
-                    "delete from verifications where phone = ? or expires < ?",
-                    phone, now
-                }
-                .execute(sql)
-                .await;
-                return false;
-            }
-
-            if v.action != action {
-                return false;
-            }
-
-            if v.code != code {
-                if tries > 2 {
-                    return false;
-                }
-
-                let _ = sqlx::query! {
-                    "update verifications set tries = ? where id = ?",
-                    tries, v.id
-                }
-                .execute(sql)
-                .await;
-
-                return false;
-            }
-
-            let _ = sqlx::query! {
-                "delete from verifications where phone = ? or expires < ?",
-                phone, now
-            }
-            .execute(sql)
-            .await;
-            true
+    let tries = v.tries + 1;
+    if v.expires <= now {
+        let _ = sqlx::query! {
+            "delete from verifications where phone = ? or expires < ?",
+            phone, now
         }
-        Err(_) => false,
+        .execute(sql)
+        .await;
+        return Err(ErrorBadRequest("expired"));
     }
+
+    if v.action != action {
+        return Err(ErrorBadRequest("invalid action"));
+    }
+
+    if v.code != code {
+        if tries > 2 {
+            return Err(ErrorBadRequest("too many tries"));
+        }
+
+        let _ = sqlx::query! {
+            "update verifications set tries = ? where id = ?",
+            tries, v.id
+        }
+        .execute(sql)
+        .await;
+
+        return Err(ErrorBadRequest("invalid code"));
+    }
+
+    let _ = sqlx::query! {
+        "delete from verifications where phone = ? or expires < ?",
+        phone, now
+    }
+    .execute(sql)
+    .await;
+
+    Ok(())
 }

@@ -14,6 +14,7 @@ use sqlx::{Pool, Sqlite, SqlitePool};
 use utoipa::OpenApi;
 
 mod admin;
+mod general;
 mod api;
 mod config;
 mod docs;
