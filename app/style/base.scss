@@ -38,8 +38,10 @@ body {
     overflow-x: hidden;
     width: 100%;
     height: 100vh;
-    color: #f2f2f2;
-    background-color: #000;
+    color: var(--primary-percent);
+
+    background-color: var(--sixty-percent);
+
     background-image: url(/static/image/pattern.svg);
     background-size: 320px;
 
@@ -49,8 +51,17 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
+    // debug
+    // body {
+    //     @include theme.dark;
+    // }
+    // main.home {
+    //     background-color: var(--sixty-percent);
+    //     color: var(--accent-color);
+    // }
+
     body {
-        @include theme.dark;
+        @include theme.light;
     }
     main.home {
         background-color: var(--sixty-percent);
