@@ -1,0 +1,96 @@
+{
+    "display": "standalone",
+    "id": "dozar-offical-pwa",
+    "name": "Dozar",
+    "short_name": "Dozar",
+
+    "description": "Dozar offical web standalone application",
+
+    "start_url": "/index.html?utm_medium=PWA&utm_source=launcher",
+    "scope": "/",
+    "orientation": "portrait",
+
+    "background_color": "#ff0000",
+    "theme_color": "#ff0000",
+
+    "icons": [
+        {
+            "src": "/gooje-logo.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        },
+        {
+            "src": "/gooje-logo192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/gooje-logo48.png",
+            "sizes": "48x48",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+
+    "related_applications": [
+        {
+            "platform": "webapp",
+            "url": "gooje.app/manifest.json",
+            "id": "gooje-offical-pwa"
+        }
+    ],
+
+    "shortcuts": [
+        {
+            "name": "Red",
+            "short_name": "Red",
+            "description": "Red",
+            "url": "/?red",
+            "icons": [
+                {
+                    "src": "/gooje-logo192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Green",
+            "short_name": "Green",
+            "description": "Green",
+            "url": "/?green",
+            "icons": [
+                {
+                    "src": "/gooje-logo192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Blue",
+            "short_name": "Blue",
+            "description": "Blue",
+            "url": "/?blue",
+            "icons": [
+                {
+                    "src": "/gooje-logo192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+
+    "screenshots": [
+        {
+            "src": "/gooje-screenshot1.jpeg",
+            "sizes": "369x800",
+            "type": "image/jpeg"
+        },
+        {
+            "src": "/gooje-screenshot2.jpeg",
+            "sizes": "369x800",
+            "type": "image/jpeg"
+        }
+    ]
+}
