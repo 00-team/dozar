@@ -5,4 +5,21 @@ main.home {
     display: flex;
     align-items: center;
     flex-direction: column;
+
+    padding: 5vh 3vw 0 3vw;
+
+    .home-header {
+        display: flex;
+        gap: 1em;
+        align-items: center;
+
+        margin-right: -20px;
+
+        color: black;
+
+        object {
+            width: 50px;
+            aspect-ratio: 1/1;
+        }
+    }
 }
