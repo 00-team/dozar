@@ -2,6 +2,7 @@ import { lazy, onMount } from 'solid-js'
 import { render } from 'solid-js/web'
 
 const Home = lazy(() => import('./pages/home'))
+const AddHome = lazy(() => import('./components/addHome'))
 
 import './style/base.scss'
 import './style/config.scss'
@@ -21,8 +22,8 @@ export const App = () => {
 
     return (
         <>
-            {/* {isSafari && // @ts-ignore
-                !window.navigator.standalone && <AddHome />} */}
+            {isSafari && // @ts-ignore
+                !window.navigator.standalone && <AddHome />}
 
             <Home />
 
