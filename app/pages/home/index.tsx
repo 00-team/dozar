@@ -8,6 +8,11 @@ const Home: Component<{}> = props => {
                 <object data='/dozar.svg'></object>
                 دوزار
             </header>
+            <div class='items-wrapper'>
+                <div class='item'></div>
+                <div class='item'></div>
+                <div class='item'></div>
+            </div>
         </main>
     )
 }
