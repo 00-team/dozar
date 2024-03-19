@@ -14,6 +14,8 @@
     --sixty-percent: #333333;
     --thirty-percent: #ae3942;
     --ten-percent: #a5a5a5;
+
+    --addon-percent: #64b5eb;
 }
 
 @mixin light {
@@ -33,5 +35,5 @@
     --thirty-percent: #f4aea4;
     --ten-percent: #eb6564;
 
-    --addon-color: #64b5eb;
+    --addon-percent: #64b5eb;
 }
