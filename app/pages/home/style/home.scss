@@ -5,9 +5,11 @@ main.home {
     display: flex;
     align-items: center;
     flex-direction: column;
-    gap: 8vh;
+    gap: 4vh;
 
-    padding-top: 5vh;
+    padding-top: 8vh;
+
+    overflow-y: auto;
 
     .home-header {
         display: flex;
@@ -35,14 +37,40 @@ main.home {
 
         @media screen and (max-width: 768px) {
             justify-content: space-between;
+            column-gap: 2vw;
         }
 
         .item {
-            aspect-ratio: 1/1.2;
-            width: clamp(0px, 46%, 300px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: column;
+
+            aspect-ratio: 1/1.3;
+            width: clamp(0px, 48%, 300px);
             background-color: white;
 
             border-radius: 0.5em;
+
+            overflow: hidden;
+
+            img.item-img {
+                width: 100%;
+                height: 75%;
+                object-fit: cover;
+            }
+            .item-detail {
+                width: 100%;
+                flex: 1 0 0;
+
+                display: flex;
+                flex-direction: column;
+                gap: 1vh;
+
+                color: black;
+
+                padding: 0.5em;
+            }
         }
     }
 }
