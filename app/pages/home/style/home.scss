@@ -5,8 +5,9 @@ main.home {
     display: flex;
     align-items: center;
     flex-direction: column;
+    gap: 8vh;
 
-    padding: 5vh 3vw 0 3vw;
+    padding-top: 5vh;
 
     .home-header {
         display: flex;
@@ -20,6 +21,28 @@ main.home {
         object {
             width: 50px;
             aspect-ratio: 1/1;
+        }
+    }
+
+    .items-wrapper {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 4vw;
+        row-gap: 3vh;
+
+        padding: 1rem;
+
+        @media screen and (max-width: 768px) {
+            justify-content: space-between;
+        }
+
+        .item {
+            aspect-ratio: 1/1.2;
+            width: clamp(0px, 46%, 300px);
+            background-color: white;
+
+            border-radius: 0.5em;
         }
     }
 }
