@@ -4,9 +4,14 @@ import './style/home.scss'
 const Home: Component<{}> = props => {
     return (
         <main class='home'>
-            <header class='home-header section_title'>
-                <object data='/dozar.svg'></object>
-                دوزار
+            <header class='home-header'>
+                <h1 class='section_title'>
+                    <object data='/dozar.svg'></object>
+                    دوزار
+                </h1>
+                <h3 class='title'>
+                    جایی برای کشف گنجینه‌های مخفی و خریدهای باارزش
+                </h3>
             </header>
             <div class='items-wrapper'>
                 <Item />
@@ -26,7 +31,7 @@ const Home: Component<{}> = props => {
 const Item: Component = () => {
     return (
         <div class='item'>
-            <img class='item-img' src='https://picsum.photos/300/300' alt='' />
+            <img class='item-img' src='https://picsum.photos/600/600' alt='' />
             <div class='item-detail'>
                 <h2 class='title_small'>لورم ایپسوم</h2>
             </div>
