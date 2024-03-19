@@ -9,11 +9,28 @@ const Home: Component<{}> = props => {
                 دوزار
             </header>
             <div class='items-wrapper'>
-                <div class='item'></div>
-                <div class='item'></div>
-                <div class='item'></div>
+                <Item />
+                <Item />
+                <Item />
+                <Item />
+                <Item />
+                <Item />
+                <Item />
+                <Item />
+                <Item />
             </div>
         </main>
+    )
+}
+
+const Item: Component = () => {
+    return (
+        <div class='item'>
+            <img class='item-img' src='https://picsum.photos/300/300' alt='' />
+            <div class='item-detail'>
+                <h2 class='title_small'>لورم ایپسوم</h2>
+            </div>
+        </div>
     )
 }
 
