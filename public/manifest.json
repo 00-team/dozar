@@ -6,7 +6,7 @@
 
     "description": "Dozar offical web standalone application",
 
-    "start_url": "/index.html?utm_medium=PWA&utm_source=launcher",
+    "start_url": "/index.html?utm_medium=PWA&utm_source=launcher?user_mode=app",
     "scope": "/",
     "orientation": "portrait",
 
