@@ -1,3 +1,4 @@
+import ClockTick from '!/components/clockTick'
 import { CalendarIcon, PriceIcon } from '!/icons/home'
 import { Component } from 'solid-js'
 import './style/home.scss'
@@ -55,7 +56,7 @@ const Item: Component = () => {
 
                     <div class='detail-row item-clock'>
                         <div class='holder'>
-                            <CalendarIcon />
+                            <ClockTick />
                             <p class='title_small'>زمان باقی مانده</p>
                         </div>
                         <div class='data'>فلان قدر</div>
