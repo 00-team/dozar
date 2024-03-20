@@ -1,11 +1,11 @@
 use actix_web::web::{Data, Json, Path, Query};
-use actix_web::{get, patch, HttpResponse, Responder, Scope};
+use actix_web::{get, patch, Scope};
 use serde::Deserialize;
 use utoipa::{OpenApi, ToSchema};
 
 use crate::docs::UpdatePaths;
-use crate::models::{Admin, ListInput, Transaction, User};
-use crate::utils::CutOff;
+use crate::models::{Admin, ListInput, Response, Transaction, User};
+use crate::utils::{sql_unwrap, CutOff};
 use crate::AppState;
 
 #[derive(OpenApi)]
@@ -29,24 +29,20 @@ pub struct Doc;
 #[get("/")]
 async fn user_list(
     _: Admin, query: Query<ListInput>, state: Data<AppState>,
-) -> impl Responder {
+) -> Response<Vec<User>> {
     let offset = i64::from(query.page) * 30;
 
-    let result = sqlx::query_as! {
-        User,
-        "select * from users limit 30 offset ?",
-        offset
-    }
-    .fetch_all(&state.sql)
-    .await;
-
-    match result {
-        Ok(v) => HttpResponse::Ok().json(v),
-        Err(e) => {
-            log::error!("err: {e}");
-            HttpResponse::InternalServerError().body("db err")
+    let users = sql_unwrap(
+        sqlx::query_as! {
+            User,
+            "select * from users limit 30 offset ?",
+            offset
         }
-    }
+        .fetch_all(&state.sql)
+        .await,
+    )?;
+
+    Ok(Json(users))
 }
 
 #[utoipa::path(
@@ -60,30 +56,20 @@ async fn user_list(
 #[get("/{id}/")]
 async fn user_get(
     _: Admin, path: Path<(i64,)>, state: Data<AppState>,
-) -> impl Responder {
+) -> Response<User> {
     let (id,) = path.into_inner();
 
-    let result = sqlx::query_as! {
-        User,
-        "select * from users where id = ?",
-        id
-    }
-    .fetch_optional(&state.sql)
-    .await;
+    let user = sql_unwrap(
+        sqlx::query_as! {
+            User,
+            "select * from users where id = ?",
+            id
+        }
+        .fetch_one(&state.sql)
+        .await,
+    )?;
 
-    match result {
-        Ok(v) => {
-            if let Some(v) = v {
-                HttpResponse::Ok().json(v)
-            } else {
-                HttpResponse::NotFound().body("user not found")
-            }
-        }
-        Err(e) => {
-            log::error!("err: {e}");
-            HttpResponse::InternalServerError().body("db err")
-        }
-    }
+    Ok(Json(user))
 }
 
 #[derive(Deserialize, ToSchema)]
@@ -105,31 +91,19 @@ struct AdminUserUpdateBody {
 async fn user_update(
     admin: Admin, path: Path<(i64,)>, body: Json<AdminUserUpdateBody>,
     state: Data<AppState>,
-) -> impl Responder {
+) -> Response<User> {
     let (id,) = path.into_inner();
     let mut change = false;
 
-    let result = sqlx::query_as! {
-        User,
-        "select * from users where id = ?",
-        id
-    }
-    .fetch_optional(&state.sql)
-    .await;
-
-    let mut user = match result {
-        Ok(v) => {
-            if let Some(v) = v {
-                v
-            } else {
-                return HttpResponse::NotFound().body("user not found");
-            }
+    let mut user = sql_unwrap(
+        sqlx::query_as! {
+            User,
+            "select * from users where id = ?",
+            id
         }
-        Err(e) => {
-            log::error!("err: {e}");
-            return HttpResponse::InternalServerError().body("db err");
-        }
-    };
+        .fetch_one(&state.sql)
+        .await,
+    )?;
 
     if let Some(v) = &body.name {
         change = true;
@@ -146,16 +120,18 @@ async fn user_update(
     if change {
         user.name.cut_off(100);
 
-        let _ = sqlx::query_as! {
-            User,
-            "update users set name = ?, banned = ? where id = ?",
-            user.name, user.banned, user.id
-        }
-        .execute(&state.sql)
-        .await;
+        sql_unwrap(
+            sqlx::query_as! {
+                User,
+                "update users set name = ?, banned = ? where id = ?",
+                user.name, user.banned, user.id
+            }
+            .execute(&state.sql)
+            .await,
+        )?;
     }
 
-    HttpResponse::Ok().json(user)
+    Ok(Json(user))
 }
 
 #[utoipa::path(
@@ -170,23 +146,19 @@ async fn user_update(
 async fn user_transactions_list(
     _: Admin, path: Path<(i64,)>, query: Query<ListInput>,
     state: Data<AppState>,
-) -> impl Responder {
+) -> Response<Vec<Transaction>> {
     let offset = query.page * 30;
-    let result = sqlx::query_as! {
-        Transaction,
-        "select * from transactions where user = ? limit 30 offset ?",
-        path.0, offset
-    }
-    .fetch_all(&state.sql)
-    .await;
-
-    match result {
-        Ok(v) => HttpResponse::Ok().json(v),
-        Err(e) => {
-            log::error!("error: {e}");
-            HttpResponse::InternalServerError().body("database failed")
+    let transactions = sql_unwrap(
+        sqlx::query_as! {
+            Transaction,
+            "select * from transactions where user = ? limit 30 offset ?",
+            path.0, offset
         }
-    }
+        .fetch_all(&state.sql)
+        .await,
+    )?;
+
+    Ok(Json(transactions))
 }
 
 pub fn router() -> Scope {

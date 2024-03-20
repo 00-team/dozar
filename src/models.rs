@@ -7,7 +7,7 @@ use actix_multipart::form::{tempfile::TempFile, MultipartForm};
 use actix_web::{
     dev::Payload,
     error,
-    web::{Data, Path, Json},
+    web::{Data, Json, Path},
     FromRequest, HttpRequest,
 };
 use actix_web_httpauth::extractors::bearer::BearerAuth;
@@ -20,7 +20,10 @@ use sqlx::{
 };
 use utoipa::ToSchema;
 
-use crate::{utils::CutOff, AppState};
+use crate::{
+    utils::{sql_unwrap, CutOff},
+    AppState,
+};
 
 #[derive(Deserialize)]
 pub struct ListInput {
@@ -62,6 +65,7 @@ pub struct User {
 
 pub struct Admin(pub User);
 
+/// dozar response type
 pub type Response<T> = Result<Json<T>, error::Error>;
 
 impl ops::Deref for Admin {
@@ -201,27 +205,17 @@ impl FromRequest for Product {
 
         Box::pin(async move {
             let path = path.await?;
-            let result = sqlx::query_as! {
-                Product,
-                "select * from products where id = ?",
-                path.0
-            }
-            .fetch_optional(&pool)
-            .await;
+            let product = sql_unwrap(
+                sqlx::query_as! {
+                    Product,
+                    "select * from products where id = ?",
+                    path.0
+                }
+                .fetch_one(&pool)
+                .await,
+            )?;
 
-            match result {
-                Ok(v) => {
-                    if let Some(v) = v {
-                        Ok(v)
-                    } else {
-                        Err(error::ErrorNotFound("product not found"))
-                    }
-                }
-                Err(e) => {
-                    log::error!("db err: {e}");
-                    Err(error::ErrorInternalServerError("db err"))
-                }
-            }
+            Ok(product)
         })
     }
 }

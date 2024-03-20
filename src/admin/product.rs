@@ -1,14 +1,15 @@
 use actix_multipart::form::MultipartForm;
+use actix_web::error::{Error, ErrorBadRequest};
 use actix_web::web::{Data, Json, Path, Query};
-use actix_web::{
-    delete, get, patch, post, put, HttpResponse, Responder, Scope,
-};
+use actix_web::{delete, get, patch, post, put, Scope};
 use serde::Deserialize;
 use utoipa::{OpenApi, ToSchema};
 
 use crate::docs::UpdatePaths;
-use crate::models::{Admin, ListInput, Product, UpdatePhoto, Photos};
-use crate::utils::{get_random_bytes, remove_photo, save_photo, CutOff};
+use crate::models::{Admin, ListInput, Photos, Product, Response, UpdatePhoto};
+use crate::utils::{
+    get_random_bytes, remove_photo, save_photo, sql_unwrap, CutOff,
+};
 use crate::AppState;
 
 #[derive(OpenApi)]
@@ -35,24 +36,20 @@ pub struct Doc;
 #[get("/")]
 async fn product_list(
     _: Admin, query: Query<ListInput>, state: Data<AppState>,
-) -> impl Responder {
+) -> Response<Vec<Product>> {
     let offset = i64::from(query.page) * 30;
 
-    let result = sqlx::query_as! {
-        Product,
-        "select * from products limit 30 offset ?",
-        offset
-    }
-    .fetch_all(&state.sql)
-    .await;
-
-    match result {
-        Ok(v) => HttpResponse::Ok().json(v),
-        Err(e) => {
-            log::error!("err: {e}");
-            HttpResponse::InternalServerError().body("db err")
+    let products = sql_unwrap(
+        sqlx::query_as! {
+            Product,
+            "select * from products limit 30 offset ?",
+            offset
         }
-    }
+        .fetch_all(&state.sql)
+        .await,
+    )?;
+
+    Ok(Json(products))
 }
 
 #[utoipa::path(
@@ -64,8 +61,8 @@ async fn product_list(
 )]
 /// Product Get
 #[get("/{id}/")]
-async fn product_get(_: Admin, product: Product) -> impl Responder {
-    HttpResponse::Ok().json(product)
+async fn product_get(_: Admin, product: Product) -> Json<Product> {
+    Json(product)
 }
 
 #[derive(Deserialize, ToSchema)]
@@ -87,35 +84,29 @@ struct ProductAddBody {
 #[post("/")]
 async fn product_add(
     _: Admin, body: Json<ProductAddBody>, state: Data<AppState>,
-) -> impl Responder {
+) -> Response<Product> {
     let mut body = body;
     body.title.cut_off(100);
     if body.end != 0 && body.start >= body.end {
-        return HttpResponse::BadRequest().body("invalid start and end times");
+        return Err(ErrorBadRequest("invalid start and end times"));
     }
 
-    let result = sqlx::query_as! {
+    let result = sql_unwrap(sqlx::query_as! {
         Product,
         "insert into products(title, end, start, base_price) values(?, ?, ?, ?)",
         body.title, body.end, body.start, body.base_price
     }
     .execute(&state.sql)
-    .await;
+    .await)?;
 
-    match result {
-        Ok(v) => HttpResponse::Ok().json(Product {
-            id: v.last_insert_rowid(),
-            title: body.title.clone(),
-            start: body.start,
-            end: body.end,
-            base_price: body.base_price,
-            ..Default::default()
-        }),
-        Err(e) => {
-            log::error!("err: {e}");
-            HttpResponse::InternalServerError().body("db err")
-        }
-    }
+    Ok(Json(Product {
+        id: result.last_insert_rowid(),
+        title: body.title.clone(),
+        start: body.start,
+        end: body.end,
+        base_price: body.base_price,
+        ..Default::default()
+    }))
 }
 
 #[derive(Deserialize, ToSchema)]
@@ -142,7 +133,7 @@ struct ProductUpdateBody {
 async fn product_update(
     _: Admin, product: Product, body: Json<ProductUpdateBody>,
     state: Data<AppState>,
-) -> impl Responder {
+) -> Response<Product> {
     let mut change = false;
     let mut product = product;
 
@@ -167,7 +158,7 @@ async fn product_update(
     }
 
     if product.end != 0 && product.start >= product.end {
-        return HttpResponse::BadRequest().body("invalid timing");
+        return Err(ErrorBadRequest("invalid timing"));
     }
 
     if let Some(detail) = &body.detail {
@@ -189,20 +180,23 @@ async fn product_update(
         product.title.cut_off(100);
         product.detail.cut_off(2048);
 
-        let _ = sqlx::query_as! {
-            Product,
-            "update products set
-            title = ?, end = ?, start = ?, base_price = ?,
-            detail = ?, buy_now_price = ?, buy_now_opens = ? where id = ?",
-            product.title, product.end, product.start, product.base_price,
-            product.detail, product.buy_now_price, product.buy_now_opens,
-            product.id
-        }
-        .execute(&state.sql)
-        .await;
+        sql_unwrap(
+            sqlx::query_as! {
+                Product,
+                "update products set
+                title = ?, end = ?, start = ?, base_price = ?,
+                detail = ?, buy_now_price = ?, buy_now_opens = ?
+                where id = ?",
+                product.title, product.end, product.start, product.base_price,
+                product.detail, product.buy_now_price, product.buy_now_opens,
+                product.id
+            }
+            .execute(&state.sql)
+            .await,
+        )?;
     }
 
-    HttpResponse::Ok().json(product)
+    Ok(Json(product))
 }
 
 #[utoipa::path(
@@ -216,22 +210,18 @@ async fn product_update(
 #[delete("/{id}/")]
 async fn product_delete(
     _: Admin, path: Path<(i64,)>, state: Data<AppState>,
-) -> impl Responder {
-    let result = sqlx::query_as! {
-        Product,
-        "delete from products where id = ?",
-        path.0
-    }
-    .execute(&state.sql)
-    .await;
-
-    match result {
-        Ok(_) => HttpResponse::Ok().body("ok"),
-        Err(e) => {
-            log::error!("err: {e}");
-            HttpResponse::InternalServerError().body("db err")
+) -> Result<&'static str, Error> {
+    sql_unwrap(
+        sqlx::query_as! {
+            Product,
+            "delete from products where id = ?",
+            path.0
         }
-    }
+        .execute(&state.sql)
+        .await,
+    )?;
+
+    Ok("ok")
 }
 
 #[utoipa::path(
@@ -247,7 +237,7 @@ async fn product_delete(
 async fn product_add_photo(
     _: Admin, product: Product, form: MultipartForm<UpdatePhoto>,
     state: Data<AppState>,
-) -> impl Responder {
+) -> Response<Product> {
     let mut product = product;
     let mut salt = get_random_bytes(8);
     loop {
@@ -261,23 +251,18 @@ async fn product_add_photo(
 
     let filename = format!("{}-{}", product.id, salt);
 
-    match save_photo(form.photo.file.path(), &filename) {
-        Ok(..) => {
-            let _ = sqlx::query_as! {
-                Product,
-                "update products set photos = ? where id = ?",
-                product.photos, product.id
-            }
-            .execute(&state.sql)
-            .await;
+    save_photo(form.photo.file.path(), &filename)?;
+    sql_unwrap(
+        sqlx::query_as! {
+            Product,
+            "update products set photos = ? where id = ?",
+            product.photos, product.id
         }
-        Err(e) => {
-            log::error!("{e}");
-            return HttpResponse::BadRequest().body("invalid photo");
-        }
-    }
+        .execute(&state.sql)
+        .await,
+    )?;
 
-    HttpResponse::Ok().json(product)
+    Ok(Json(product))
 }
 
 #[utoipa::path(
@@ -294,25 +279,27 @@ async fn product_add_photo(
 #[delete("/{id}/photo/{idx}/")]
 async fn product_delete_photo(
     _: Admin, product: Product, path: Path<(i64, u8)>, state: Data<AppState>,
-) -> impl Responder {
+) -> Result<&'static str, Error> {
     let mut product = product;
     let idx: usize = path.1.into();
     if idx >= product.photos.salts.len() {
-        return HttpResponse::BadRequest().body("photo not found");
+        return Err(ErrorBadRequest("photo not found"));
     }
 
     let salt = product.photos.salts.remove(idx);
     remove_photo(&format!("{}-{}", product.id, salt));
 
-    let _ = sqlx::query_as! {
-        Product,
-        "update products set photos = ? where id = ?",
-        product.photos, product.id
-    }
-    .execute(&state.sql)
-    .await;
+    sql_unwrap(
+        sqlx::query_as! {
+            Product,
+            "update products set photos = ? where id = ?",
+            product.photos, product.id
+        }
+        .execute(&state.sql)
+        .await,
+    )?;
 
-    HttpResponse::Ok().body("photo was removed")
+    Ok("photo was removed")
 }
 
 pub fn router() -> Scope {
