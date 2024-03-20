@@ -42,12 +42,13 @@ main.home {
         width: 100%;
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         column-gap: 4vw;
-        row-gap: 8vh;
+        row-gap: calc(2vh + (300px / 4));
 
         padding: 1rem;
 
-        margin-top: 4vh;
+        margin-top: calc(2vh + (150px / 4));
 
         @media screen and (max-width: 768px) {
             justify-content: space-between;
@@ -55,8 +56,8 @@ main.home {
         }
 
         .item {
-            width: 100%;
-            height: 350px;
+            width: clamp(0px, 100%, 350px);
+
             display: flex;
             align-items: center;
             flex-direction: column;
@@ -76,31 +77,57 @@ main.home {
                 box-shadow: 0px 6px 20px -10px black;
             }
 
-            .item-detail {
+            .item-wrapper {
                 color: black;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                gap: 1vh;
 
                 width: 100%;
                 height: 100%;
                 padding: 1rem 0;
 
-                .price {
+                margin-top: calc(1.5em + (350px / -4));
+
+                .item-name {
+                    width: 100%;
                     display: flex;
                     align-items: center;
-                    justify-content: space-between;
-                    width: 100%;
+                    justify-content: center;
 
-                    .holder {
+                    position: relative;
+                }
+
+                .item-details {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    flex-direction: column;
+                    gap: 2vh;
+
+                    padding: 1rem;
+
+                    .detail-row {
                         display: flex;
                         align-items: center;
-                        gap: 0.5em;
-                    }
+                        justify-content: space-between;
+                        width: 100%;
 
-                    .data {
-                        font-family: 'number';
+                        .holder {
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5em;
+
+                            font-family: 'yekanBold';
+                        }
+
+                        .data {
+                            font-family: 'yekan';
+
+                            &.number {
+                                font-family: 'number';
+                            }
+                        }
                     }
                 }
             }
