@@ -36,7 +36,7 @@
         margin-top: -20%;
 
         h1 {
-            font-family: 'yekan';
+            font-family: 'yekanBold';
         }
 
         object {
@@ -61,6 +61,8 @@
             display: flex;
             align-items: flex-start;
             gap: 0.5em;
+
+            font-family: 'yekan';
 
             .add,
             svg {
