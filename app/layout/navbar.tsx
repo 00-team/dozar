@@ -5,3 +5,5 @@ import './style/navbar.scss'
 const Navbar: Component<{}> = props => {
     return <nav class='nav-container'></nav>
 }
+
+export default Navbar
