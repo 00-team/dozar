@@ -1,3 +1,4 @@
+import { PriceIcon } from '!/icons/home'
 import { Component } from 'solid-js'
 import './style/home.scss'
 
@@ -34,6 +35,19 @@ const Item: Component = () => {
             <img class='item-img' src='https://picsum.photos/600/600' alt='' />
             <div class='item-detail'>
                 <h2 class='title_small'>لورم ایپسوم</h2>
+                <div class='price'>
+                    <div class='holder'>
+                        <PriceIcon size={15} />
+                        <p class='title_smaller'>قیمت پایه</p>
+                    </div>
+                    <div class='data'>2,000</div>
+                </div>
+                <div class='clock title_smaller'>
+                    <div class='holder'>
+                        <p>زمان باقی مانده</p>
+                    </div>
+                    <div class='data'></div>
+                </div>
             </div>
         </div>
     )
