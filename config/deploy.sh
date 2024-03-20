@@ -48,25 +48,25 @@ if check_diff "package.json"; then
     echo $SPACER
 fi
 
-if check_diff "src/* vite.ts"; then
+if check_diff "app/* vite.ts"; then
     echo "$EG build the app!"
     npm run build
     echo $SPACER
 fi
 
-
-
-echo "$EG cargo build"
-cargo build --release
-echo $SPACER
+if check_diff "src/* Cargo.toml"; then
+    echo "$EG cargo build"
+    cargo build --release
+    echo $SPACER
+fi
 
 echo "$EG restart dozar"
 systemctl restart dozar
 echo $SPACER
 
-# echo "$EG status neptun"
-# systemctl status neptun
-# echo $SPACER
+echo "$EG status dozar"
+systemctl status dozar
+echo $SPACER
 
 echo "Deploy is Done! ✅"
 
