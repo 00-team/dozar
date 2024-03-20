@@ -79,5 +79,13 @@
                 }
             ]
         }
+    ],
+
+    "screenshots": [
+        {
+            "src": "/dozar-screenshot1.png",
+            "sizes": "372x807",
+            "type": "image/png"
+        }
     ]
 }
