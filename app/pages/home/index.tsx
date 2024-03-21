@@ -30,7 +30,7 @@ const Home: Component<{}> = props => {
                 </h1>
                 <h3 class='title'>
                     جایی برای کشف <span class='shadow-scroll'>گنجینه‌</span> های
-                    مخفی و <span class='shadow-scroll'>خرید</span> های باارزش
+                    مخفی و <span class='shadow-scroll'>خرید</span> های با ارزش
                 </h3>
             </header>
             <div class='items-wrapper'>
