@@ -1,4 +1,4 @@
-const cacheName = 'cache-v1'
+const cacheName = 'cache-dozar'
 
 const precacheResources = [
     '/offline.html',
