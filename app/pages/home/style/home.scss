@@ -11,6 +11,10 @@ main.home {
 
     overflow-y: auto;
 
+    @media all and (display-mode: standalone) {
+        padding-top: 12vh;
+    }
+
     .home-header {
         width: 100%;
         display: flex;
