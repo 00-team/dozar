@@ -1,18 +1,36 @@
 import ClockTick from '!/components/clockTick'
 import { CalendarIcon, PriceIcon } from '!/icons/home'
-import { Component } from 'solid-js'
+import { Component, onMount } from 'solid-js'
 import './style/home.scss'
 
 const Home: Component<{}> = props => {
+    let scrollElems: null | NodeListOf<Element>
+
+    onMount(() => {
+        scrollElems = document.querySelectorAll('span.shadow-scroll')
+    })
+
     return (
-        <main class='home'>
+        <main
+            class='home'
+            onscroll={e => {
+                let y = e.target.scrollTop
+
+                if (y > 500) return
+
+                scrollElems.forEach((elem: HTMLElement) => {
+                    elem.style.filter = `drop-shadow(1px ${Math.max(15 - y * 0.2, -15)}px ${Math.max(4 - y * 0.05, 1)}px rgb(0, 0, 0, 0.5))`
+                })
+            }}
+        >
             <header class='home-header'>
                 <h1 class='section_title'>
                     <object data='/dozar.svg'></object>
                     دوزار
                 </h1>
                 <h3 class='title'>
-                    جایی برای کشف گنجینه‌های مخفی و خریدهای باارزش
+                    جایی برای کشف <span class='shadow-scroll'>گنجینه‌</span> های
+                    مخفی و <span class='shadow-scroll'>خرید</span> های باارزش
                 </h3>
             </header>
             <div class='items-wrapper'>
