@@ -40,8 +40,7 @@ main.home {
                 color: var(--ten-percent);
 
                 line-height: 1.5em;
-                filter: drop-shadow(rgba(0, 0, 0, 0.5) 1px 15px 4px);
-                will-change: filter;
+                filter: drop-shadow(rgba(0, 0, 0, 0.4) 1px 4px 3px);
             }
         }
     }
