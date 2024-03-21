@@ -1,28 +1,11 @@
 import ClockTick from '!/components/clockTick'
 import { CalendarIcon, PriceIcon } from '!/icons/home'
-import { Component, onMount } from 'solid-js'
+import { Component } from 'solid-js'
 import './style/home.scss'
 
 const Home: Component<{}> = props => {
-    let scrollElems: null | NodeListOf<Element>
-
-    onMount(() => {
-        scrollElems = document.querySelectorAll('span.shadow-scroll')
-    })
-
     return (
-        <main
-            class='home'
-            onscroll={e => {
-                let y = e.target.scrollTop
-
-                if (y > 500) return
-
-                scrollElems.forEach((elem: HTMLElement) => {
-                    elem.style.filter = `drop-shadow(1px ${Math.max(15 - y * 0.2, -15)}px ${Math.max(4 - y * 0.05, 1)}px rgb(0, 0, 0, 0.5))`
-                })
-            }}
-        >
+        <main class='home'>
             <header class='home-header'>
                 <h1 class='section_title'>
                     <object data='/dozar.svg'></object>
