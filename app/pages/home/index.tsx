@@ -34,7 +34,13 @@ const Home: Component<{}> = props => {
 const Item: Component = () => {
     return (
         <div class='item'>
-            <img class='item-img' src='https://picsum.photos/600/600' alt='' />
+            <div class='item-img-wrapper'>
+                <img
+                    class='item-img'
+                    src='https://picsum.photos/600/600'
+                    alt=''
+                />
+            </div>
             <div class='item-wrapper'>
                 <h2 class='title item-name'>لورم ایپسوم</h2>
 
