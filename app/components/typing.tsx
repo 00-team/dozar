@@ -7,6 +7,7 @@ interface TypingProps {
     speed: number
     classList?: string
     delay?: number
+    onFinish?: () => void
 }
 
 export const Typing: Component<TypingProps> = ({
@@ -14,6 +15,7 @@ export const Typing: Component<TypingProps> = ({
     speed,
     classList = '',
     delay,
+    onFinish,
 }) => {
     const [text, setText] = createSignal('')
 
@@ -34,6 +36,7 @@ export const Typing: Component<TypingProps> = ({
             timer = setTimeout(type, speed)
         } else {
             cursor.style.animationIterationCount = `1`
+            onFinish()
         }
     }
 
