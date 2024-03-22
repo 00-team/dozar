@@ -18,6 +18,26 @@
 
     src: url('./iranYekan/IRANYekanWebRegular.woff') format('woff2');
 }
+@font-face {
+    font-family: 'arvand';
+
+    src: url('./arvand/arvand.ttf') format('woff2');
+}
+@font-face {
+    font-family: 'arvandBold';
+
+    src: url('./arvand/Arvand-Bold.ttf') format('woff2');
+}
+@font-face {
+    font-family: 'colak';
+
+    src: url('./test/Colak.ttf') format('woff2');
+}
+@font-face {
+    font-family: 'kaaf';
+
+    src: url('./test/Kaaf.ttf') format('woff2');
+}
 
 @font-face {
     font-family: 'vazir';
