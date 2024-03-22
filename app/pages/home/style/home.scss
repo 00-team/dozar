@@ -75,6 +75,45 @@ main.home {
             background-color: white;
             border-radius: 1rem;
 
+            @media screen and (max-width: 768px) {
+                &:nth-child(1) {
+                    .item-img-wrapper {
+                        &::before {
+                            animation: before-transform 0.5s 0.5s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                        &::after {
+                            animation: after-transform 0.5s 0.5s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                    }
+                }
+                &:nth-child(2) {
+                    .item-img-wrapper {
+                        &::before {
+                            animation: before-transform 0.5s 0.6s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                        &::after {
+                            animation: after-transform 0.5s 0.6s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                    }
+                }
+                &:nth-child(3) {
+                    .item-img-wrapper {
+                        &::before {
+                            animation: before-transform 0.5s 0.7s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                        &::after {
+                            animation: after-transform 0.5s 0.7s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                    }
+                }
+            }
+
             .item-img-wrapper {
                 width: 93%;
                 aspect-ratio: 1.8 / 1;
@@ -85,9 +124,9 @@ main.home {
 
                 box-shadow: 0px 6px 20px -10px black;
 
-                overflow: hidden;
                 position: relative;
                 isolation: isolate;
+                overflow: hidden;
 
                 &::before,
                 &::after {
@@ -95,12 +134,14 @@ main.home {
                     position: absolute;
                     width: 100%;
                     height: 100%;
+
+                    opacity: 0.3;
                 }
 
                 &::before {
                     transform: translate(110%, -110%);
-                    top: 10px;
-                    right: 10px;
+                    top: 0;
+                    right: 0;
                     background-image: linear-gradient(
                         226deg,
                         rgba(255, 255, 255, 0) 0%,
@@ -108,7 +149,7 @@ main.home {
                         white 120%
                     );
 
-                    animation: before-transform 0.5s 1s
+                    animation: before-transform 0.75s
                         cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
 
                     @keyframes before-transform {
@@ -121,8 +162,8 @@ main.home {
                     }
                 }
                 &::after {
-                    bottom: 10px;
-                    left: 10px;
+                    bottom: 0;
+                    left: 0;
                     background-image: linear-gradient(
                         45deg,
                         rgba(255, 255, 255, 0) 0%,
@@ -132,7 +173,7 @@ main.home {
 
                     transform: translate(-110%, 110%);
 
-                    animation: after-transform 0.5s 1s
+                    animation: after-transform 0.5s
                         cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
 
                     @keyframes after-transform {
