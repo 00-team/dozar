@@ -38,4 +38,13 @@ main.home {
             font-size: 0.9em;
         }
     }
+    .items-wrapper {
+        width: clamp(0px, 100%, 1000px);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        row-gap: 3vh;
+    }
 }
