@@ -22,8 +22,6 @@ export const App = () => {
 
     const isSafari = navigator.userAgent.includes('Safari')
 
-    alert(window.location)
-
     return (
         <>
             {isSafari && // @ts-ignore
