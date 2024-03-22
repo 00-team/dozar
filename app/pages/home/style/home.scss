@@ -37,14 +37,23 @@ main.home {
             font-family: 'arvandBold';
             font-size: 0.9em;
         }
-    }
-    .items-wrapper {
-        width: clamp(0px, 100%, 1000px);
 
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        row-gap: 3vh;
+        .items-wrapper {
+            width: clamp(0px, 100%, 1000px);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            row-gap: 3vh;
+
+            .hero-item {
+                width: clamp(0px, 100%, 350px);
+                aspect-ratio: 1/1.2;
+
+                background-color: var(--thirty-percent);
+                border-radius: 3rem 3rem 0 0;
+            }
+        }
     }
 }
