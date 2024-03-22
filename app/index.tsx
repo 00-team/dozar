@@ -20,7 +20,7 @@ export const App = () => {
         }
     })
 
-    const isSafari = navigator.userAgent.includes('Safari')
+    const isSafari = navigator.userAgent.includes('Safari') && innerWidth <= 768
 
     return (
         <>
