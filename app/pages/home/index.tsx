@@ -19,8 +19,8 @@ const Home: Component<{}> = props => {
                     />
                 </p>
                 <div class='items-wrapper'>
-                    <div class='item'></div>
-                    <div class='item'></div>
+                    <HomeItem />
+                    <HomeItem />
                 </div>
                 <div class='cta-wrapper'>
                     <button class='cta main'></button>
@@ -29,6 +29,10 @@ const Home: Component<{}> = props => {
             </section>
         </main>
     )
+}
+
+export const HomeItem: Component = () => {
+    return <div class='hero-item'></div>
 }
 
 export default Home
