@@ -44,7 +44,7 @@ main.home {
                 color: var(--ten-percent);
 
                 line-height: 1.5em;
-                filter: drop-shadow(rgba(0, 0, 0, 0.4) 1px 4px 3px);
+                // filter: drop-shadow(rgba(0, 0, 0, 0.4) 1px 4px 3px);
             }
         }
     }
@@ -77,9 +77,9 @@ main.home {
 
             .item-img-wrapper {
                 width: 93%;
-                aspect-ratio: 1.15 / 1;
+                aspect-ratio: 1.8 / 1;
                 margin: 0 auto;
-                transform: translateY(-35%);
+                transform: translateY(-40%);
 
                 border-radius: 0.7rem;
 
@@ -98,19 +98,31 @@ main.home {
                 }
 
                 &::before {
-                    transform: translate(100%, -100%);
-                    top: 0;
-                    right: 0%;
+                    transform: translate(110%, -110%);
+                    top: 10px;
+                    right: 10px;
                     background-image: linear-gradient(
                         226deg,
                         rgba(255, 255, 255, 0) 0%,
                         rgba(255, 255, 255, 0) 75%,
                         white 120%
                     );
+
+                    animation: before-transform 0.5s 1s
+                        cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+
+                    @keyframes before-transform {
+                        from {
+                            transform: translate(110%, -110%);
+                        }
+                        to {
+                            transform: translate(0, 0);
+                        }
+                    }
                 }
                 &::after {
-                    bottom: 0;
-                    left: 0%;
+                    bottom: 10px;
+                    left: 10px;
                     background-image: linear-gradient(
                         45deg,
                         rgba(255, 255, 255, 0) 0%,
@@ -118,7 +130,19 @@ main.home {
                         white 100%
                     );
 
-                    transform: translate(-100%, 100%);
+                    transform: translate(-110%, 110%);
+
+                    animation: after-transform 0.5s 1s
+                        cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+
+                    @keyframes after-transform {
+                        from {
+                            transform: translate(-110%, 110%);
+                        }
+                        to {
+                            transform: translate(0, 0);
+                        }
+                    }
                 }
 
                 img {
@@ -132,10 +156,9 @@ main.home {
                 color: black;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                gap: 2vh;
 
                 width: 100%;
-                height: 100%;
                 padding: 1rem 0;
 
                 margin-top: calc(1.5em + (350px / -4));
@@ -154,7 +177,7 @@ main.home {
                     display: flex;
                     align-items: center;
                     flex-direction: column;
-                    gap: 2vh;
+                    gap: 2.5vh;
 
                     padding: 1rem;
 
