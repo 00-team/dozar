@@ -1,7 +1,9 @@
+import { Route, Router, Routes } from '@solidjs/router'
 import { lazy, onMount } from 'solid-js'
 import { render } from 'solid-js/web'
 
 const Home = lazy(() => import('./pages/home'))
+const MobileHome = lazy(() => import('./pages/mobile'))
 const AddHome = lazy(() => import('./components/addHome'))
 
 import './style/base.scss'
@@ -20,12 +22,19 @@ export const App = () => {
 
     const isSafari = navigator.userAgent.includes('Safari')
 
+    alert(window.location)
+
     return (
         <>
             {isSafari && // @ts-ignore
                 !window.navigator.standalone && <AddHome />}
 
-            <Home />
+            <Router>
+                <Routes>
+                    <Route path={'/'} component={Home} />
+                    <Route path={'/mobile'} component={MobileHome} />
+                </Routes>
+            </Router>
 
             {/* <Show when={user.token} fallback={<Login />}>
                 {activeTab() === 'home' && <Home />}
