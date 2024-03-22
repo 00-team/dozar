@@ -18,6 +18,14 @@ const Home: Component<{}> = props => {
                         sentence='جایی برای کشف گنجینه های مخفی و خرید های با ارزش'
                     />
                 </p>
+                <div class='items-wrapper'>
+                    <div class='item'></div>
+                    <div class='item'></div>
+                </div>
+                <div class='cta-wrapper'>
+                    <button class='cta main'></button>
+                    <button class='cta '></button>
+                </div>
             </section>
         </main>
     )
