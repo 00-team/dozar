@@ -237,6 +237,10 @@ main.home {
                             gap: 0.5em;
 
                             font-family: 'yekanBold';
+
+                            p {
+                                font: inherit;
+                            }
                         }
 
                         .data {
