@@ -103,11 +103,21 @@ main.home {
                 justify-content: space-between;
 
                 width: clamp(0px, 100%, 350px);
-                aspect-ratio: 1/1.2;
+                aspect-ratio: 1/1.4;
 
                 padding: 1em;
 
-                background-color: var(--thirty-percent);
+                background-image: linear-gradient(
+                    to bottom,
+                    rgba(235, 101, 100, 1) 15%,
+                    rgba(255, 159, 138, 1) 35%,
+                    rgba(255, 255, 255, 1) 50%
+                );
+                background-color: color-mix(
+                    in lch,
+                    var(--thirty-percent) 85%,
+                    white
+                );
                 border-radius: 3rem 3rem 0 0;
                 box-shadow:
                     rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
@@ -120,6 +130,44 @@ main.home {
                     object-fit: cover;
 
                     border-radius: 2rem 2rem 0 0;
+                }
+
+                .item-details {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 2vh;
+
+                    width: 100%;
+
+                    .detail-row {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 100%;
+
+                        .holder {
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5em;
+
+                            font-family: 'yekanBold';
+
+                            p {
+                                color: black;
+                                font: inherit;
+                            }
+                        }
+
+                        .data {
+                            font-family: 'yekan';
+
+                            &.number {
+                                font-family: 'number';
+                            }
+                        }
+                    }
                 }
 
                 .item-goto {
