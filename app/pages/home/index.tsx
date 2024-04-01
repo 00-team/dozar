@@ -40,8 +40,8 @@ const Home: Component<{}> = props => {
                     <HomeItem />
                 </div>
                 <div class='cta-wrapper'>
-                    <button class='cta main'></button>
-                    <button class='cta '></button>
+                    <button class='cta main '>اصلی</button>
+                    <button class='cta '>فرعی</button>
                 </div>
             </section>
         </main>
