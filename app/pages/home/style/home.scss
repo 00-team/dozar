@@ -28,6 +28,8 @@ main.home {
 
         overflow: hidden;
 
+        $ANIM_DURATION: 0.8s;
+
         .titles-wrapper {
             display: flex;
             align-items: center;
@@ -40,7 +42,7 @@ main.home {
 
             &.active {
                 animation: titles-slideup cubic-bezier(0.45, 0.02, 0.09, 0.98)
-                    1s forwards;
+                    $ANIM_DURATION forwards;
 
                 @keyframes titles-slideup {
                     from {
@@ -81,8 +83,8 @@ main.home {
             opacity: 0;
 
             &.active {
-                animation: items-slidein 1s cubic-bezier(0.45, 0.02, 0.09, 0.98)
-                    forwards;
+                animation: items-slidein $ANIM_DURATION
+                    cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
             }
 
             @keyframes items-slidein {
@@ -97,11 +99,36 @@ main.home {
             }
 
             .hero-item {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                justify-content: space-between;
+
                 width: clamp(0px, 100%, 350px);
                 aspect-ratio: 1/1.2;
 
                 background-color: var(--thirty-percent);
                 border-radius: 3rem 3rem 0 0;
+
+                padding: 1em;
+
+                img.item-img {
+                    max-height: 100%;
+                    width: 100%;
+                    aspect-ratio: 2/1;
+                    object-fit: cover;
+
+                    border-radius: 2rem 2rem 0 0;
+                }
+
+                .item-goto {
+                    width: 100%;
+                    padding: 0.7em;
+                    border-radius: 1rem 1rem 0;
+
+                    background: var(--ten-percent);
+                    color: white;
+                }
             }
         }
     }
