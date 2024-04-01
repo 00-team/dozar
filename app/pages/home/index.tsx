@@ -23,11 +23,13 @@ const Home: Component<{}> = props => {
                         {/* جایی برای کشف <span>گنجینه‌</span> های مخفی و{' '}
                     <span>خرید</span> های با ارزش */}
                         <Typing
-                            speed={75}
+                            speed={65}
                             sentence='جایی برای کشف گنجینه های مخفی و خرید های با ارزش'
                             onFinish={() => {
-                                titlesWrapper.className += ' active'
-                                itemsWrapper.className += ' active'
+                                setTimeout(() => {
+                                    titlesWrapper.className += ' active'
+                                    itemsWrapper.className += ' active'
+                                }, 500)
                             }}
                         />
                     </p>
@@ -47,7 +49,13 @@ const Home: Component<{}> = props => {
 }
 
 export const HomeItem: Component = () => {
-    return <div class='hero-item'></div>
+    return (
+        <div class='hero-item'>
+            <img src='https://picsum.photos/600/600' class='item-img' alt='' />
+            <div class='item-detail'></div>
+            <button class='item-goto button-basic title_small'>دیدن</button>
+        </div>
+    )
 }
 
 export default Home
