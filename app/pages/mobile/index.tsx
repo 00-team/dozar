@@ -48,7 +48,7 @@ const Item: Component = () => {
                     <div class='detail-row item-price '>
                         <div class='holder'>
                             <PriceIcon />
-                            <p class='title_small'>قیمت پایه</p>
+                            <p class='title_smaller'>قیمت پایه</p>
                         </div>
                         <div class='data number'>2,000</div>
                     </div>
@@ -56,7 +56,7 @@ const Item: Component = () => {
                     <div class='detail-row item-init'>
                         <div class='holder'>
                             <CalendarIcon />
-                            <p class='title_small'>زمان شروع </p>
+                            <p class='title_smaller'>زمان شروع </p>
                         </div>
                         <div class='data'>یسشیش</div>
                     </div>
@@ -64,7 +64,7 @@ const Item: Component = () => {
                     <div class='detail-row item-clock'>
                         <div class='holder'>
                             <ClockTick />
-                            <p class='title_small'>زمان باقی مانده</p>
+                            <p class='title_smaller'>زمان باقی مانده</p>
                         </div>
                         <div class='data'>فلان قدر</div>
                     </div>
