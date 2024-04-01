@@ -32,7 +32,7 @@ main.home {
             margin-right: -20px;
 
             object {
-                width: 50px;
+                width: 70px;
                 aspect-ratio: 1/1;
             }
         }
@@ -40,6 +40,9 @@ main.home {
             width: 75%;
             text-align: center;
 
+            font-family: 'arvandBold';
+            font-size: 1.3em;
+            word-spacing: 0.5vmin;
             span {
                 color: var(--ten-percent);
 
