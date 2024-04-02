@@ -53,7 +53,13 @@ const Home: Component<{}> = props => {
 export const HomeItem: Component = () => {
     return (
         <div class='hero-item'>
-            <img src='https://picsum.photos/600/600' class='item-img' alt='' />
+            <img
+                src='https://picsum.photos/1200/600'
+                class='item-img'
+                loading='lazy'
+                decoding='async'
+                alt='dozar dozar-item'
+            />
             <div class='item-details'>
                 <div class='detail-row item-price '>
                     <div class='holder'>
