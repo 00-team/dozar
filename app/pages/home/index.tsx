@@ -20,7 +20,11 @@ const Home: Component<{}> = props => {
             <section class='hero-section'>
                 <div class='titles-wrapper'>
                     <header class='hero-header section_title'>
-                        <object data='/dozar.svg' type=''></object>
+                        <object
+                            data='/dozar.svg'
+                            aria-labelledby='logo'
+                            type=''
+                        ></object>
                         <p>دوزار</p>
                     </header>
                     <p class='title'>
