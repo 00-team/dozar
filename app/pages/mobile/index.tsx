@@ -8,7 +8,10 @@ const MoblieHome: Component<{}> = props => {
         <main class='home'>
             <header class='home-header'>
                 <h1 class='section_title'>
-                    <object data='/dozar.svg' aria-labelledby='logo'></object>
+                    <object
+                        data='/public/dozar.svg'
+                        aria-labelledby='logo'
+                    ></object>
                     دوزار
                 </h1>
                 <h3 class='title'>

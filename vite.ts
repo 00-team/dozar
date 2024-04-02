@@ -35,6 +35,7 @@ export default defineConfig(env => {
             outDir: 'dist',
             watch,
             rollupOptions: {},
+            copyPublicDir: false,
         },
         resolve: {
             alias: { '!': resolve(__dirname, 'app') },

@@ -16,7 +16,7 @@ const AddHome: Component<AddhomeProps> = P => {
         <div class='add-home'>
             <header>
                 <object
-                    data='/dozar.svg'
+                    data='/public/dozar.svg'
                     aria-labelledby='logo'
                     type=''
                 ></object>

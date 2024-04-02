@@ -15,25 +15,25 @@
 
     "icons": [
         {
-            "src": "/dozar.svg",
+            "src": "/public/dozar.svg",
             "sizes": "any",
             "type": "image/svg+xml",
             "purpose": "any"
         },
         {
-            "src": "/dozar-logo192.png",
+            "src": "/public/dozar-logo192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "/dozar-logo48.png",
+            "src": "/public/dozar-logo48.png",
             "sizes": "48x48",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "/dozar-logo512.png",
+            "src": "/public/dozar-logo512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
@@ -43,7 +43,7 @@
     "related_applications": [
         {
             "platform": "webapp",
-            "url": "dozar.app/manifest.json",
+            "url": "dozar.app/public/manifest.json",
             "id": "dozar-offical-pwa"
         }
     ],
@@ -56,7 +56,7 @@
             "url": "/?red",
             "icons": [
                 {
-                    "src": "/dozar-logo192.png",
+                    "src": "/public/dozar-logo192.png",
                     "sizes": "192x192"
                 }
             ]
@@ -68,7 +68,7 @@
             "url": "/?green",
             "icons": [
                 {
-                    "src": "/dozar-logo192.png",
+                    "src": "/public/dozar-logo192.png",
                     "sizes": "192x192"
                 }
             ]
@@ -80,7 +80,7 @@
             "url": "/?blue",
             "icons": [
                 {
-                    "src": "/dozar-logo192.png",
+                    "src": "/public/dozar-logo192.png",
                     "sizes": "192x192"
                 }
             ]
@@ -89,7 +89,7 @@
 
     "screenshots": [
         {
-            "src": "/dozar-screenshot1.png",
+            "src": "/public/dozar-screenshot1.png",
             "sizes": "372x807",
             "type": "image/png"
         }

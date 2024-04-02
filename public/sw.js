@@ -1,12 +1,12 @@
 const cacheName = 'cache-dozar'
 
 const precacheResources = [
-    '/offline.html',
-    '/yekanBold.woff',
-    '/dozar.svg',
-    '/dozar.ico',
-    '/dozar-logo192.png',
-    '/dozar-logo48.png',
+    '/public/offline.html',
+    '/public/yekanBold.woff',
+    '/public/dozar.svg',
+    '/public/dozar.ico',
+    '/public/dozar-logo192.png',
+    '/public/dozar-logo48.png',
     // '/gooje-splash.jpg',
     // '/gooje-screenshot1.jpeg',
     // '/gooje-screenshot2.jpeg',

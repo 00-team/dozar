@@ -21,7 +21,7 @@ const Home: Component<{}> = props => {
                 <div class='titles-wrapper'>
                     <header class='hero-header section_title'>
                         <object
-                            data='/dozar.svg'
+                            data='/public/dozar.svg'
                             aria-labelledby='logo'
                             type=''
                         ></object>
