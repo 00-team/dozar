@@ -1,5 +1,6 @@
 @mixin dark {
     color-scheme: dark;
+    font-pallete: dark;
 
     --primary-color: #121212;
     --accent-color: #f2f2f2;
@@ -20,6 +21,7 @@
 
 @mixin light {
     color-scheme: light;
+    font-pallete: light;
 
     --primary-color: #121212;
     --accent-color: #f2f2f2;
