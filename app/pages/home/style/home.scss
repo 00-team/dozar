@@ -170,13 +170,42 @@ main.home {
                     }
                 }
 
-                .item-goto {
+                button.item-goto {
                     width: 100%;
                     padding: 0.7em;
                     border-radius: 1rem 1rem 0;
 
+                    display: grid;
+                    place-items: center;
+
                     background: var(--ten-percent);
                     color: white;
+
+                    overflow: hidden;
+                    position: relative;
+                    isolation: isolate;
+
+                    transition: 0.5s ease-out;
+
+                    &::before {
+                        content: '';
+
+                        position: absolute;
+                        width: 500px;
+                        height: 500px;
+
+                        border-radius: 100vmax;
+                        transition: box-shadow 0.5s ease-out;
+
+                        z-index: -1;
+                    }
+
+                    &:hover {
+                        color: black;
+                        &::before {
+                            box-shadow: inset 0 0 0 250px var(--addon-percent);
+                        }
+                    }
                 }
             }
         }
