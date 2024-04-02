@@ -10,9 +10,22 @@ main.home {
     padding-top: 8vh;
 
     overflow-y: auto;
+    direction: ltr;
 
     @media all and (display-mode: standalone) {
         padding-top: 12vh;
+    }
+    // scrollbar-color: var(--ten-percent) var(--sixty-percent);
+
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+    &::-webkit-scrollbar-track {
+        background: var(--sixty-percent);
+    }
+    &::-webkit-scrollbar-thumb {
+        background: var(--ten-percent);
+        border-radius: 10px;
     }
 
     .home-header {
