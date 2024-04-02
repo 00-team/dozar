@@ -7,10 +7,12 @@ import './style/home.scss'
 const Home: Component<{}> = props => {
     let itemsWrapper: null | HTMLElement
     let titlesWrapper: null | HTMLElement
+    let ctaWrapper: null | HTMLElement
 
     onMount(() => {
         itemsWrapper = document.querySelector('.items-wrapper')
         titlesWrapper = document.querySelector('.titles-wrapper')
+        ctaWrapper = document.querySelector('.cta-wrapper')
     })
 
     return (
@@ -31,6 +33,7 @@ const Home: Component<{}> = props => {
                                 setTimeout(() => {
                                     titlesWrapper.className += ' active'
                                     itemsWrapper.className += ' active'
+                                    ctaWrapper.className += ' active'
                                 }, 500)
                             }}
                         />
@@ -42,8 +45,8 @@ const Home: Component<{}> = props => {
                     <HomeItem />
                 </div>
                 <div class='cta-wrapper'>
-                    <button class='cta main '>اصلی</button>
-                    <button class='cta '>فرعی</button>
+                    <button class='cta main title_smaller'>مزایده ها</button>
+                    <button class='cta title_smaller'>درباره ما</button>
                 </div>
             </section>
         </main>
