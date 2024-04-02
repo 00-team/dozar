@@ -36,6 +36,7 @@ main.home {
 
             height: auto;
             padding: 3vh 0;
+            padding-bottom: 5vh;
 
             &::-webkit-scrollbar {
                 width: 0px;
@@ -278,6 +279,8 @@ main.home {
 
                 button {
                     width: clamp(0px, 100%, 350px);
+
+                    font-size: clamp(0.9rem, 0.5rem + 1.9vw, 1.25rem);
                 }
             }
 
@@ -294,7 +297,6 @@ main.home {
                     box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
                     border-radius: 10px;
 
-                    font: inherit;
                     font-family: iranBold;
 
                     white-space: nowrap;
