@@ -31,6 +31,12 @@
             "sizes": "48x48",
             "type": "image/png",
             "purpose": "maskable"
+        },
+        {
+            "src": "/dozar-logo512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ],
 
