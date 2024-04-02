@@ -23,6 +23,18 @@
 
     z-index: 999;
 
+    // animation
+    max-height: 0;
+    opacity: 0;
+
+    will-change: opacity, display;
+    transition: opacity 1s cubic-bezier(0.45, 0.02, 0.09, 0.98);
+
+    &.active {
+        max-height: 100%;
+        opacity: 1;
+    }
+
     header {
         display: flex;
         align-items: center;
