@@ -15,7 +15,11 @@ const AddHome: Component<AddhomeProps> = P => {
     return (
         <div class='add-home'>
             <header>
-                <object data='/dozar.svg' type=''></object>
+                <object
+                    data='/dozar.svg'
+                    aria-labelledby='logo'
+                    type=''
+                ></object>
                 <h1 class='title'>
                     وب اپلیکیشن دوزار را به صفحه اصلی موبایل خود اضافه کنید.
                 </h1>
