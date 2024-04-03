@@ -49,8 +49,8 @@ export const App = () => {
             {isSafari && // @ts-ignore
                 !window.navigator.standalone && <AddHome />}
 
-            {/* <Navbar /> */}
             <Router>
+                <Navbar />
                 <Routes>
                     <Route path={'/'} component={Home} />
                     <Route path={'/mobile'} component={MobileHome} />
