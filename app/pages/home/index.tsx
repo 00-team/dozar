@@ -47,6 +47,7 @@ const Home: Component<{}> = props => {
                 <div class='items-wrapper'>
                     <HomeItem />
                     <HomeItem />
+                    <HomeItem />
                 </div>
                 <div class='cta-wrapper'>
                     <button class='cta main title_smaller'>مزایده ها</button>
