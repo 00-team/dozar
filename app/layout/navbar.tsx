@@ -1,36 +1,43 @@
-import { AuctionIcon, ContactusIcon, HomeIcon } from '!/icons/navbar'
+import { AuctionIcon, ContactusIcon, HomeIcon, MenuIcon } from '!/icons/navbar'
 import { Link } from '@solidjs/router'
 import { Component, JSX } from 'solid-js'
 
 import './style/navbar.scss'
 
 const Navbar: Component<{}> = props => {
-    let isMobile = innerWidth <= 768
     return (
         <>
-            {isMobile ? (
-                <></>
-            ) : (
-                <nav class='nav-container'>
-                    <div class='nav-links'>
-                        <NavLinkPC Icon={HomeIcon} link='/' title='صفحه اصلی' />
-                        <NavLinkPC
-                            Icon={AuctionIcon}
-                            link='/'
-                            title='مزایده ها'
-                        />
-                        <NavLinkPC
-                            Icon={ContactusIcon}
-                            link='/'
-                            title='ارتباط با ما'
-                        />
-                    </div>
-                    <Link href='/' class='nav-logo hero_title'>
-                        DOZAR
-                    </Link>
-                </nav>
-            )}
+            <NavPc />
+            <NavMobile />
         </>
+    )
+}
+
+const NavMobile: Component = () => {
+    return (
+        <nav class='nav-container-mobile'>
+            <div class='nav-open'>
+                <MenuIcon size={35} />
+            </div>
+            <Link href='/' class='nav-logo hero_title'>
+                DOZAR
+            </Link>
+        </nav>
+    )
+}
+
+const NavPc = () => {
+    return (
+        <nav class='nav-container-pc'>
+            <div class='nav-links'>
+                <NavLinkPC Icon={HomeIcon} link='/' title='صفحه اصلی' />
+                <NavLinkPC Icon={AuctionIcon} link='/' title='مزایده ها' />
+                <NavLinkPC Icon={ContactusIcon} link='/' title='ارتباط با ما' />
+            </div>
+            <Link href='/' class='nav-logo hero_title'>
+                DOZAR
+            </Link>
+        </nav>
     )
 }
 
