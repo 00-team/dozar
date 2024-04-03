@@ -15,14 +15,14 @@ const Navbar: Component<{}> = props => {
                     <div class='nav-links'>
                         <NavLinkPC Icon={HomeIcon} link='/' title='صفحه اصلی' />
                         <NavLinkPC
-                            Icon={ContactusIcon}
-                            link='/'
-                            title='ارتباط با ما'
-                        />
-                        <NavLinkPC
                             Icon={AuctionIcon}
                             link='/'
                             title='مزایده ها'
+                        />
+                        <NavLinkPC
+                            Icon={ContactusIcon}
+                            link='/'
+                            title='ارتباط با ما'
                         />
                     </div>
                     <Link href='/' class='nav-logo hero_title'>
