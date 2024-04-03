@@ -95,12 +95,13 @@ main.home {
         }
 
         .items-wrapper {
-            width: clamp(0px, 100%, 1000px);
+            width: clamp(0px, 100%, 1500px);
 
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
+            column-gap: 1vw;
             row-gap: 3vh;
 
             padding: 0 1em;
@@ -161,7 +162,7 @@ main.home {
                 img.item-img {
                     max-height: 100%;
                     width: 100%;
-                    aspect-ratio: 2/1;
+                    aspect-ratio: 1.5/1;
                     object-fit: cover;
 
                     border-radius: 2rem 2rem 5px 5px;
