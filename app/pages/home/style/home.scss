@@ -296,10 +296,11 @@ main.home {
 
                 font-family: 'arvandBold';
 
+                border-radius: 1rem;
+
                 &.main {
                     background-color: var(--addon-percent);
                     box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
-                    border-radius: 10px;
 
                     white-space: nowrap;
                 }

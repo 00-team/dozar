@@ -5,6 +5,7 @@ import { getDB } from './db'
 import { SHOW_ADDHOME_AGAIN } from './store/dbLabels'
 
 const Home = lazy(() => import('./pages/home'))
+const Navbar = lazy(() => import('./layout/Navbar'))
 const MobileHome = lazy(() => import('./pages/mobile'))
 const AddHome = lazy(() => import('./components/addHome'))
 
@@ -48,6 +49,7 @@ export const App = () => {
             {isSafari && // @ts-ignore
                 !window.navigator.standalone && <AddHome />}
 
+            {/* <Navbar /> */}
             <Router>
                 <Routes>
                     <Route path={'/'} component={Home} />
