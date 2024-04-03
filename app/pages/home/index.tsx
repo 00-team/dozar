@@ -50,8 +50,9 @@ const Home: Component<{}> = props => {
                     <HomeItem />
                 </div>
                 <div class='cta-wrapper'>
-                    <button class='cta main title_smaller'>مزایده ها</button>
-                    <button class='cta title_smaller'>درباره ما</button>
+                    <button class='cta main title_smaller'>
+                        همه مزایده ها{' '}
+                    </button>
                 </div>
             </section>
         </main>
