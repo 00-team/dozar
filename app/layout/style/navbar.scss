@@ -7,9 +7,6 @@
     position: sticky;
     top: 0;
 
-    // debug
-    height: 100px;
-
     z-index: 999;
 
     display: flex;
@@ -21,7 +18,8 @@
     .nav-logo {
         font-family: 'ordibehesht';
         color: hsl(353 95% 55% / 1);
-        font-size: 4em;
+        font-size: 3.5em;
+        margin: -0.2em 0;
     }
     .nav-links {
         display: flex;
@@ -33,7 +31,7 @@
             justify-content: center;
             gap: 0.5em;
 
-            padding: 2em 1.2em;
+            padding: 1em 1.2em;
         }
     }
 }
