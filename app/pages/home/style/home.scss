@@ -36,7 +36,7 @@ main.home {
 
         overflow: hidden;
 
-        $ANIM_DURATION: 0.8s;
+        $ANIM_DURATION: 1s;
 
         @media screen and (max-width: 768px) {
             justify-content: flex-start;
@@ -294,14 +294,12 @@ main.home {
                 justify-content: center;
                 padding: 1em 3em;
 
-                font-family: 'yekanBold';
+                font-family: 'arvandBold';
 
                 &.main {
                     background-color: var(--addon-percent);
                     box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
                     border-radius: 10px;
-
-                    font-family: iranBold;
 
                     white-space: nowrap;
                 }
