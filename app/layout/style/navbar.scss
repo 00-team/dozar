@@ -3,11 +3,37 @@
 
     background-color: white;
 
-    position: fixed;
+    position: -webkit-sticky;
+    position: sticky;
     top: 0;
 
     // debug
     height: 100px;
 
     z-index: 999;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 2vw;
+
+    .nav-logo {
+        font-family: 'ordibehesht';
+        color: hsl(353 95% 55% / 1);
+        font-size: 4em;
+    }
+    .nav-links {
+        display: flex;
+        align-items: center;
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5em;
+
+            padding: 2em 1.2em;
+        }
+    }
 }
