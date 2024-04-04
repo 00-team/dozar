@@ -1,6 +1,6 @@
 import { AuctionIcon, ContactusIcon, HomeIcon, MenuIcon } from '!/icons/navbar'
 import { Link } from '@solidjs/router'
-import { Component, JSX } from 'solid-js'
+import { Component, createSignal, JSX } from 'solid-js'
 
 import './style/navbar.scss'
 
@@ -14,15 +14,22 @@ const Navbar: Component<{}> = props => {
 }
 
 const NavMobile: Component = () => {
+    const [openNav, setOpenNav] = createSignal(false)
     return (
-        <nav class='nav-container-mobile'>
-            <div class='nav-open'>
-                <MenuIcon size={35} />
-            </div>
-            <Link href='/' class='nav-logo hero_title'>
-                DOZAR
-            </Link>
-        </nav>
+        <>
+            <nav class='nav-container-mobile'>
+                <div class='nav-open' onclick={() => setOpenNav(true)}>
+                    <MenuIcon size={35} />
+                </div>
+                <Link href='/' class='nav-logo hero_title'>
+                    DOZAR
+                </Link>
+            </nav>
+            <div
+                class='nav-mobile-open'
+                classList={{ active: openNav() }}
+            ></div>
+        </>
     )
 }
 
