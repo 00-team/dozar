@@ -95,4 +95,12 @@
     &.active {
         transform: translateX(0);
     }
+
+    .close-nav {
+        position: absolute;
+        top: 5px;
+        right: 0;
+
+        padding: 2em;
+    }
 }
