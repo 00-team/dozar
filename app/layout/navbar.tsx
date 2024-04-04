@@ -1,3 +1,4 @@
+import { AddToHomeIcon } from '!/icons/addHome'
 import {
     AuctionIcon,
     CloseIcon,
@@ -54,6 +55,15 @@ const NavMobile: Component = () => {
                         title='ارتباط با ما'
                         onclick={() => setOpenNav(false)}
                     />
+                    <NavLink
+                        Icon={AddToHomeIcon}
+                        link=''
+                        title='اضافه به صفحه اصلی'
+                        onclick={() => {
+                            document.querySelector('.add-home').className +=
+                                ' active'
+                        }}
+                    />
                 </div>
             </div>
         </>
@@ -91,17 +101,32 @@ interface NavLink {
 }
 const NavLink: Component<NavLink> = ({ Icon, link, title, onclick }) => {
     return (
-        <Link
-            href={link}
-            class='nav-link title_small'
-            classList={{ active: link === window.location.pathname }}
-            onclick={onclick}
-        >
-            <div class='holder icon'>
-                <Icon />
-            </div>
-            <p class='data'>{title}</p>
-        </Link>
+        <>
+            {link !== '' ? (
+                <Link
+                    href={link}
+                    class='nav-link title_small'
+                    classList={{ active: link === window.location.pathname }}
+                    onclick={onclick}
+                >
+                    <div class='holder icon'>
+                        <Icon />
+                    </div>
+                    <p class='data'>{title}</p>
+                </Link>
+            ) : (
+                <button
+                    class='nav-link title_small'
+                    classList={{ active: link === window.location.pathname }}
+                    onclick={onclick}
+                >
+                    <div class='holder icon'>
+                        <Icon />
+                    </div>
+                    <p class='data'>{title}</p>
+                </button>
+            )}
+        </>
     )
 }
 
