@@ -114,7 +114,6 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        gap: 4vh;
 
         width: 100%;
 
@@ -125,7 +124,11 @@
             gap: 1em;
 
             font-family: 'arvandBold';
-            font-size: 0.8em;
+            font-size: 1em;
+
+            padding-block: 1em;
+
+            width: 100%;
         }
     }
 }
