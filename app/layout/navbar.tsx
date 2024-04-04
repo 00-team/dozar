@@ -60,6 +60,7 @@ const NavMobile: Component = () => {
                         link=''
                         title='اضافه به صفحه اصلی'
                         onclick={() => {
+                            setOpenNav(false)
                             document.querySelector('.add-home').className +=
                                 ' active'
                         }}
