@@ -27,6 +27,8 @@ export const App = () => {
             timeout = setTimeout(() => {
                 addHomeElem = document.querySelector('.add-home')
 
+                if (addHomeElem.className.includes('active')) return
+
                 addHomeElem.className += ' active'
             }, 20000)
         }
