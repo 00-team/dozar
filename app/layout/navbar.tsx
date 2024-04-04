@@ -35,6 +35,26 @@ const NavMobile: Component = () => {
                 <div class='close-nav icon' onclick={() => setOpenNav(false)}>
                     <CloseIcon size={30} />
                 </div>
+                <div class='mobile-links'>
+                    <NavLink
+                        Icon={HomeIcon}
+                        link='/'
+                        title='صفحه اصلی'
+                        onclick={() => setOpenNav(false)}
+                    />
+                    <NavLink
+                        Icon={AuctionIcon}
+                        link='/'
+                        title='مزایده ها'
+                        onclick={() => setOpenNav(false)}
+                    />
+                    <NavLink
+                        Icon={ContactusIcon}
+                        link='/'
+                        title='ارتباط با ما'
+                        onclick={() => setOpenNav(false)}
+                    />
+                </div>
             </div>
         </>
     )
@@ -44,9 +64,17 @@ const NavPc = () => {
     return (
         <nav class='nav-container-pc'>
             <div class='nav-links'>
-                <NavLinkPC Icon={HomeIcon} link='/' title='صفحه اصلی' />
-                <NavLinkPC Icon={AuctionIcon} link='/' title='مزایده ها' />
-                <NavLinkPC Icon={ContactusIcon} link='/' title='ارتباط با ما' />
+                <NavLink Icon={HomeIcon} link='/' title='صفحه اصلی' />
+                <NavLink
+                    Icon={AuctionIcon}
+                    link='/auctions'
+                    title='مزایده ها'
+                />
+                <NavLink
+                    Icon={ContactusIcon}
+                    link='/contact'
+                    title='ارتباط با ما'
+                />
             </div>
             <Link href='/' class='nav-logo hero_title'>
                 DOZAR
@@ -55,14 +83,20 @@ const NavPc = () => {
     )
 }
 
-interface NavLinkPc {
+interface NavLink {
     Icon: (P: any) => JSX.Element | JSX.Element
     title: string
     link: string
+    onclick?: () => void
 }
-const NavLinkPC: Component<NavLinkPc> = ({ Icon, link, title }) => {
+const NavLink: Component<NavLink> = ({ Icon, link, title, onclick }) => {
     return (
-        <Link href={link} class='nav-link title_small'>
+        <Link
+            href={link}
+            class='nav-link title_small'
+            classList={{ active: link === window.location.pathname }}
+            onclick={onclick}
+        >
             <div class='holder icon'>
                 <Icon />
             </div>
