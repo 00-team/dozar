@@ -1,4 +1,10 @@
-import { AuctionIcon, ContactusIcon, HomeIcon, MenuIcon } from '!/icons/navbar'
+import {
+    AuctionIcon,
+    CloseIcon,
+    ContactusIcon,
+    HomeIcon,
+    MenuIcon,
+} from '!/icons/navbar'
 import { Link } from '@solidjs/router'
 import { Component, createSignal, JSX } from 'solid-js'
 
@@ -25,10 +31,11 @@ const NavMobile: Component = () => {
                     DOZAR
                 </Link>
             </nav>
-            <div
-                class='nav-mobile-open'
-                classList={{ active: openNav() }}
-            ></div>
+            <div class='nav-mobile-open' classList={{ active: openNav() }}>
+                <div class='close-nav icon' onclick={() => setOpenNav(false)}>
+                    <CloseIcon size={30} />
+                </div>
+            </div>
         </>
     )
 }
