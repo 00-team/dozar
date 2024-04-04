@@ -36,6 +36,11 @@
             gap: 0.5em;
 
             padding: 1em 1.2em;
+
+            .data {
+                font-family: 'arvandBold';
+                font-size: 0.8em;
+            }
         }
     }
 }
@@ -102,5 +107,25 @@
         right: 0;
 
         padding: 2em;
+    }
+
+    .mobile-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 4vh;
+
+        width: 100%;
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1em;
+
+            font-family: 'arvandBold';
+            font-size: 0.8em;
+        }
     }
 }
