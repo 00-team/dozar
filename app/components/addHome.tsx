@@ -70,9 +70,12 @@ const AddHome: Component<AddhomeProps> = P => {
                 <button
                     class='basic-button got-it title'
                     onclick={() => {
-                        // @ts-ignore
-                        document.querySelector('.add-home').style.display =
-                            'none'
+                        let className =
+                            document.querySelector('.add-home').className
+                        className = className.replace('active', '')
+
+                        document.querySelector('.add-home').className =
+                            className
                     }}
                 >
                     متوجه شدم
