@@ -24,7 +24,6 @@ export const App = () => {
         let showAddHomeAgain = await getDB(SHOW_ADDHOME_AGAIN)
 
         if (showAddHomeAgain === undefined) {
-            console.log('slm')
             timeout = setTimeout(() => {
                 addHomeElem = document.querySelector('.add-home')
 
