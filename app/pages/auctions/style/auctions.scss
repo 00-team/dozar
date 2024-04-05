@@ -158,8 +158,10 @@ main.auctions {
                     width: 100%;
                     height: 100%;
 
-                    opacity: 0.3;
+                    opacity: 0.5;
                 }
+
+                $GLASS_DURATION: 0.75s;
 
                 &::before {
                     transform: translate(110%, -110%);
@@ -172,7 +174,7 @@ main.auctions {
                         white 120%
                     );
 
-                    animation: before-transform 0.75s
+                    animation: before-transform $GLASS_DURATION 1s
                         cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
 
                     @keyframes before-transform {
@@ -196,7 +198,7 @@ main.auctions {
 
                     transform: translate(-110%, 110%);
 
-                    animation: after-transform 0.5s
+                    animation: after-transform $GLASS_DURATION 1s
                         cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
 
                     @keyframes after-transform {
