@@ -6,7 +6,7 @@ main.auctions {
     align-items: center;
     flex-direction: column;
 
-    gap: 8vh;
+    gap: calc(8vh + 90px);
 
     padding: 7vh 5vw;
 
@@ -23,6 +23,8 @@ main.auctions {
         position: -webkit-sticky;
         top: 100px;
         isolation: isolate;
+
+        z-index: 2;
 
         .filter {
             padding: 1em 2em;
@@ -76,17 +78,209 @@ main.auctions {
         align-items: center;
         justify-content: space-around;
         flex-wrap: wrap;
-        row-gap: calc(4vh + 20px);
+        row-gap: calc(8vh + 50px);
 
-        .auction-card {
+        z-index: 1;
+
+        .item {
             width: clamp(0px, 100%, 350px);
-            aspect-ratio: 1/1.2;
+
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 2vh;
 
             background-color: white;
             box-shadow:
                 rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
                 rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
-            border-radius: 1em;
+
+            border-radius: 1rem;
+            padding: 1em 0.9em;
+
+            @media screen and (max-width: 768px) {
+                &:nth-child(1) {
+                    .item-img-wrapper {
+                        &::before {
+                            animation: before-transform 0.5s 0.5s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                        &::after {
+                            animation: after-transform 0.5s 0.5s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                    }
+                }
+                &:nth-child(2) {
+                    .item-img-wrapper {
+                        &::before {
+                            animation: before-transform 0.5s 0.6s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                        &::after {
+                            animation: after-transform 0.5s 0.6s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                    }
+                }
+                &:nth-child(3) {
+                    .item-img-wrapper {
+                        &::before {
+                            animation: before-transform 0.5s 0.7s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                        &::after {
+                            animation: after-transform 0.5s 0.7s
+                                cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+                        }
+                    }
+                }
+            }
+
+            .item-img-wrapper {
+                width: 100%;
+                aspect-ratio: 1.8 / 1;
+                margin: 0 auto;
+                transform: translateY(-40%);
+
+                border-radius: 0.7rem;
+
+                box-shadow: 0px 6px 20px -10px black;
+
+                position: relative;
+                isolation: isolate;
+                overflow: hidden;
+
+                &::before,
+                &::after {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+
+                    opacity: 0.3;
+                }
+
+                &::before {
+                    transform: translate(110%, -110%);
+                    top: 0;
+                    right: 0;
+                    background-image: linear-gradient(
+                        226deg,
+                        rgba(255, 255, 255, 0) 0%,
+                        rgba(255, 255, 255, 0) 75%,
+                        white 120%
+                    );
+
+                    animation: before-transform 0.75s
+                        cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+
+                    @keyframes before-transform {
+                        from {
+                            transform: translate(110%, -110%);
+                        }
+                        to {
+                            transform: translate(0, 0);
+                        }
+                    }
+                }
+                &::after {
+                    bottom: 0;
+                    left: 0;
+                    background-image: linear-gradient(
+                        45deg,
+                        rgba(255, 255, 255, 0) 0%,
+                        rgba(255, 255, 255, 0) 75%,
+                        white 100%
+                    );
+
+                    transform: translate(-110%, 110%);
+
+                    animation: after-transform 0.5s
+                        cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+
+                    @keyframes after-transform {
+                        from {
+                            transform: translate(-110%, 110%);
+                        }
+                        to {
+                            transform: translate(0, 0);
+                        }
+                    }
+                }
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+
+            .item-wrapper {
+                color: black;
+                display: flex;
+                flex-direction: column;
+                gap: 2vh;
+
+                width: 100%;
+                padding: 1rem 0;
+
+                margin-top: calc(1.5em + (350px / -4));
+
+                .item-name {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    position: relative;
+                }
+
+                .item-details {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    flex-direction: column;
+                    gap: 2.5vh;
+
+                    padding: 1rem 0;
+
+                    .detail-row {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 100%;
+
+                        .holder {
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5em;
+
+                            font-family: 'yekanBold';
+
+                            p {
+                                font: inherit;
+                            }
+                        }
+
+                        .data {
+                            font-family: 'yekan';
+
+                            &.number {
+                                font-family: 'number';
+                            }
+                        }
+                    }
+                }
+            }
+            .goto {
+                width: 100%;
+                padding: 0.5em;
+                background: var(--ten-percent);
+                border-radius: 0.7rem;
+                text-align: center;
+                color: white;
+            }
         }
     }
 }
