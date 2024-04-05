@@ -1,6 +1,7 @@
 import ClockTick from '!/components/clockTick'
 import { Typing } from '!/components/typing'
 import { CalendarIcon, PriceIcon } from '!/icons/home'
+import { Link } from '@solidjs/router'
 import { Component, onMount } from 'solid-js'
 import './style/home.scss'
 
@@ -50,9 +51,9 @@ const Home: Component<{}> = props => {
                     <HomeItem />
                 </div>
                 <div class='cta-wrapper'>
-                    <button class='cta main title_smaller'>
+                    <Link href='/auctions' class='cta main title_smaller'>
                         همه مزایده ها{' '}
-                    </button>
+                    </Link>
                 </div>
             </section>
         </main>
