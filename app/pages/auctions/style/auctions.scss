@@ -6,7 +6,7 @@ main.auctions {
     align-items: center;
     flex-direction: column;
 
-    gap: calc(8vh + 90px);
+    gap: 12vh;
 
     padding: 7vh 5vw;
 
@@ -79,6 +79,7 @@ main.auctions {
         justify-content: space-around;
         flex-wrap: wrap;
         row-gap: calc(8vh + 50px);
+        column-gap: 2vw;
 
         z-index: 1;
 
