@@ -45,13 +45,13 @@ const NavMobile: Component = () => {
                     />
                     <NavLink
                         Icon={AuctionIcon}
-                        link='/'
+                        link='/auctions'
                         title='مزایده ها'
                         onclick={() => setOpenNav(false)}
                     />
                     <NavLink
                         Icon={ContactusIcon}
-                        link='/'
+                        link='/contact'
                         title='ارتباط با ما'
                         onclick={() => setOpenNav(false)}
                     />
