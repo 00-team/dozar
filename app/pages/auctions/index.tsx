@@ -1,3 +1,4 @@
+import { AuctionModel } from '!/store/auction'
 import { Component, createSignal } from 'solid-js'
 
 import './style/auctions.scss'
@@ -6,7 +7,7 @@ const Auctions: Component<{}> = props => {
     const [filter, setFilter] = createSignal<'active' | 'inactive'>('active')
     return (
         <main class='auctions'>
-            <div
+            <header
                 class='filter-wrapper'
                 classList={{ active: filter() === 'active' }}
             >
@@ -26,10 +27,23 @@ const Auctions: Component<{}> = props => {
                 >
                     غیر فعال
                 </button>
+            </header>
+            <div class='auctions-wrapper'>
+                <AuctionCard />
+                <AuctionCard />
+                <AuctionCard />
+                <AuctionCard />
+                <AuctionCard />
+                <AuctionCard />
             </div>
-            <div class='auctions-wrapper'></div>
         </main>
     )
+}
+
+interface AuctionCardProps extends AuctionModel {}
+
+const AuctionCard: Component = () => {
+    return <div class='auction-card'></div>
 }
 
 export default Auctions
