@@ -19,7 +19,9 @@ main.auctions {
         border-radius: 100vmax;
         box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
 
-        position: relative;
+        position: sticky;
+        position: -webkit-sticky;
+        top: 100px;
         isolation: isolate;
 
         .filter {
