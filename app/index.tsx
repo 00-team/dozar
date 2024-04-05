@@ -7,6 +7,7 @@ import { SHOW_ADDHOME_AGAIN } from './store/dbLabels'
 const Home = lazy(() => import('./pages/home'))
 const Navbar = lazy(() => import('./layout/Navbar'))
 const MobileHome = lazy(() => import('./pages/mobile'))
+const Auctions = lazy(() => import('./pages/auctions'))
 const AddHome = lazy(() => import('./components/addHome'))
 
 import './style/base.scss'
@@ -55,6 +56,7 @@ export const App = () => {
                 <Routes>
                     <Route path={'/'} component={Home} />
                     <Route path={'/mobile'} component={MobileHome} />
+                    <Route path={'/auctions'} component={Auctions} />
                 </Routes>
             </Router>
 
