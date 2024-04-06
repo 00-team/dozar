@@ -59,14 +59,6 @@ export const App = () => {
                     <Route path={'/auction/:slug'} component={Auction} />
                 </Routes>
             </Router>
-
-            {/* <Show when={user.token} fallback={<Login />}>
-                {activeTab() === 'home' && <Home />}
-                {activeTab() === 'map' && <Map />}
-                {activeTab() === 'account' && <Account />}
-
-                <Navbar />
-            </Show> */}
         </>
     )
 }
