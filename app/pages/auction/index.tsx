@@ -16,7 +16,20 @@ const Auction: Component<{}> = props => {
                     <span>192,100,000</span>
                 </p>
             </aside>
-            <aside class='item-details'></aside>
+            <aside class='item-details'>
+                <div class='item-intro'>
+                    <h2 class='title item-title'>لورم ایپسوم ایز ده</h2>
+                    <p class='title_smaller'>
+                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت
+                        چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون هدف
+                        بهبود ابزارهای کاربردی می باشد کتابهای زیادی در شصت و سه
+                        درصد گذشته حال و آینده چاپ و با استفاده از طراحان گرافیک
+                        است چاپگرها و متون هدف بهبود ابزارهای کاربردی می باشد
+                        کتابهای زیادی در شصت و سه درصد گذشته حال و آینده
+                    </p>
+                </div>
+                <div class='item-buyers'></div>
+            </aside>
         </main>
     )
 }
