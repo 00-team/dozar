@@ -1,9 +1,8 @@
 main.auction {
-    height: 100vh;
+    height: 200vh;
     width: clamp(0px, 100%, 1700px);
 
     display: flex;
-    align-items: center;
     justify-content: space-around;
     gap: 2vw;
 
@@ -20,6 +19,10 @@ main.auction {
         justify-content: flex-start;
         flex-direction: column;
         gap: 2vh;
+
+        position: sticky;
+        position: -webkit-sticky;
+        top: 100px;
 
         .item-img {
             width: 400px;
