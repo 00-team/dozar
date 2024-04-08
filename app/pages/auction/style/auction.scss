@@ -5,12 +5,18 @@ main.auction {
     justify-content: space-around;
     gap: 2vw;
 
-    padding: 7vh 0;
+    padding: 7vh 3vw;
 
     margin: 0 auto;
 
+    @media screen and (max-width: 768px) {
+        flex-direction: column;
+        align-items: center;
+        gap: 4vh;
+    }
+
     .item-buy {
-        width: clamp(0px, 49%, 400px);
+        width: clamp(0px, 49%, 500px);
         height: max-content;
 
         display: flex;
@@ -23,8 +29,13 @@ main.auction {
         position: -webkit-sticky;
         top: 150px;
 
+        @media screen and (max-width: 768px) {
+            position: static;
+            width: 100%;
+        }
+
         .item-img {
-            width: 400px;
+            width: 100%;
             aspect-ratio: 1 / 1;
             object-fit: cover;
 
@@ -32,7 +43,7 @@ main.auction {
         }
 
         .cta {
-            width: 400px;
+            width: 100%;
             padding: 1em;
             background-color: var(--ten-percent);
             border-radius: 10px;
@@ -44,7 +55,7 @@ main.auction {
             align-items: center;
             justify-content: center;
 
-            width: 400px;
+            width: 100%;
 
             &::before,
             &::after {
@@ -62,11 +73,15 @@ main.auction {
     }
 
     .item-details {
-        width: 100%;
+        width: clamp(0px, 75%, 1300px);
 
         display: flex;
         flex-direction: column;
         gap: 4vh;
+
+        @media screen and (max-width: 768px) {
+            width: 100%;
+        }
 
         .item-intro {
             width: 100%;
@@ -99,6 +114,10 @@ main.auction {
             border-radius: 10px;
 
             padding: 2.5em 2em;
+
+            @media screen and (max-width: 768px) {
+                padding: 1.5em 0.5em;
+            }
 
             h3 {
                 width: 100%;
