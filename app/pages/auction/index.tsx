@@ -28,7 +28,12 @@ const Auction: Component<{}> = props => {
                         کتابهای زیادی در شصت و سه درصد گذشته حال و آینده
                     </p>
                 </div>
-                <div class='item-buyers'></div>
+                <div class='item-buyers'>
+                    <h3 class='title'>
+                        <span>لیست خریداران</span>
+                    </h3>
+                    <div class='buyers-wrapper'></div>
+                </div>
             </aside>
         </main>
     )
