@@ -70,8 +70,9 @@ main.auction {
 
         .item-intro {
             width: 100%;
-            background-color: white;
 
+            background-color: white;
+            box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
             border-radius: 10px;
 
             display: flex;
@@ -93,6 +94,8 @@ main.auction {
             gap: 4vh;
 
             background-color: white;
+            box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+
             border-radius: 10px;
 
             padding: 2.5em 2em;
