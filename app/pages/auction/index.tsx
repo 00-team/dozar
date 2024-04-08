@@ -32,7 +32,67 @@ const Auction: Component<{}> = props => {
                     <h3 class='title_small'>
                         <span>لیست خریداران</span>
                     </h3>
-                    <div class='buyers-wrapper'></div>
+                    <table class='buyers-wrapper'>
+                        <thead>
+                            <tr class='title'>
+                                <th>کاربر</th>
+                                <th>قیمت</th>
+                                <th>ساعت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                            <tr class='title_smaller'>
+                                <td>لئرم یشسیص</td>
+                                <td>100000</td>
+                                <td>11:12:02</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </aside>
         </main>
