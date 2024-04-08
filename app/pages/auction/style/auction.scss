@@ -12,7 +12,7 @@ main.auction {
 
     .item-buy {
         width: clamp(0px, 49%, 400px);
-        height: 100%;
+        height: max-content;
 
         display: flex;
         align-items: center;
@@ -22,7 +22,7 @@ main.auction {
 
         position: sticky;
         position: -webkit-sticky;
-        top: 100px;
+        top: 150px;
 
         .item-img {
             width: 400px;
@@ -59,6 +59,27 @@ main.auction {
                 white-space: nowrap;
                 padding: 0 1em;
             }
+        }
+    }
+
+    .item-details {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        gap: 4vh;
+
+        .item-intro {
+            width: 100%;
+            background-color: white;
+
+            border-radius: 10px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 4vh;
+
+            padding: 2em;
         }
     }
 }
