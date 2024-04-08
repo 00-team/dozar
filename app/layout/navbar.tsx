@@ -5,6 +5,7 @@ import {
     ContactusIcon,
     HomeIcon,
     MenuIcon,
+    ProfileIcon,
 } from '!/icons/navbar'
 import { Link } from '@solidjs/router'
 import { Component, createSignal, JSX } from 'solid-js'
@@ -50,6 +51,12 @@ const NavMobile: Component = () => {
                         onclick={() => setOpenNav(false)}
                     />
                     <NavLink
+                        Icon={ProfileIcon}
+                        link='/account'
+                        title='پروفایل من'
+                        onclick={() => setOpenNav(false)}
+                    />
+                    <NavLink
                         Icon={ContactusIcon}
                         link='/contact'
                         title='ارتباط با ما'
@@ -80,6 +87,11 @@ const NavPc = () => {
                     Icon={AuctionIcon}
                     link='/auctions'
                     title='مزایده ها'
+                />
+                <NavLink
+                    Icon={ProfileIcon}
+                    link='/account'
+                    title='پروفایل من'
                 />
                 <NavLink
                     Icon={ContactusIcon}
