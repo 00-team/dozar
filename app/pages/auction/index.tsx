@@ -18,7 +18,7 @@ const Auction: Component<{}> = props => {
             </aside>
             <aside class='item-details'>
                 <div class='item-intro'>
-                    <h2 class='title item-title'>لورم ایپسوم ایز ده</h2>
+                    <h2 class='title_small item-title'>لورم ایپسوم ایز ده</h2>
                     <p class='title_smaller'>
                         لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت
                         چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون هدف
@@ -29,7 +29,7 @@ const Auction: Component<{}> = props => {
                     </p>
                 </div>
                 <div class='item-buyers'>
-                    <h3 class='title'>
+                    <h3 class='title_small'>
                         <span>لیست خریداران</span>
                     </h3>
                     <div class='buyers-wrapper'></div>
