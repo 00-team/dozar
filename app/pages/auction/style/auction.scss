@@ -80,6 +80,10 @@ main.auction {
             gap: 4vh;
 
             padding: 2em;
+
+            h2 {
+                font-family: 'arvandBold';
+            }
         }
         .item-buyers {
             width: 100%;
@@ -101,6 +105,8 @@ main.auction {
                 width: 100%;
                 display: flex;
                 align-items: center;
+
+                font-family: 'arvandBold';
 
                 &::before,
                 &::after {
