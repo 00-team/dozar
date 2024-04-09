@@ -29,10 +29,6 @@ const Login: Component<{}> = props => {
 
     const [loading, setLoading] = createSignal(false)
 
-    createEffect(() => {
-        console.log(loading())
-    })
-
     return (
         <main class='login-container'>
             <object data='/public/dozar.svg' aria-labelledby='logo'></object>
@@ -159,6 +155,8 @@ const PhoneStage: Component<LoginChildProps> = ({
     )
 }
 
+const CODE_LENGTH = 5
+
 const CodeStage: Component<LoginChildProps> = ({
     data,
     error,
@@ -184,10 +182,15 @@ const CodeStage: Component<LoginChildProps> = ({
             codeInp.style.left = `0px`
             codeInp.style.transform = `translateX(0)`
         } else {
-            let left = blocks[Math.min(3, length)].getBoundingClientRect().x
+            let left =
+                blocks[
+                    Math.min(CODE_LENGTH - 1, length)
+                ].getBoundingClientRect().x
+
+            console.log(left)
 
             codeInp.style.transform = `translateX(0)`
-            codeInp.style.left = `${left - blockWidth}px`
+            codeInp.style.left = `${left - blockWidth * 2}px`
         }
     }
 
@@ -247,7 +250,7 @@ const CodeStage: Component<LoginChildProps> = ({
                             const value = e.currentTarget.value.replace(' ', '')
                             const length = value.length
 
-                            if (length >= 3) {
+                            if (length > CODE_LENGTH) {
                                 return (e.target.value = ' ')
                             }
                             if (e.inputType === 'deleteContentBackward') {
@@ -260,7 +263,7 @@ const CodeStage: Component<LoginChildProps> = ({
                                 return (e.target.value = ' ')
                             }
 
-                            if (code().length >= 4)
+                            if (code().length > CODE_LENGTH)
                                 return (e.target.value = ' ')
 
                             setCode([...code(), value || e.target.value])
@@ -276,7 +279,7 @@ const CodeStage: Component<LoginChildProps> = ({
 
                             paste.split('').map(data => {
                                 setCode(s => {
-                                    if (s.length >= 4) return s
+                                    if (s.length >= CODE_LENGTH) return s
                                     return [...s, data]
                                 })
                             })
@@ -287,26 +290,19 @@ const CodeStage: Component<LoginChildProps> = ({
                         }}
                     />
                     <div class='blocks'>
-                        <div class='block section_title'>
-                            {code()[0] && (
-                                <div class='anim-code'>{code()[0]}</div>
-                            )}
-                        </div>
-                        <div class='block section_title'>
-                            {code()[1] && (
-                                <div class='anim-code'>{code()[1]}</div>
-                            )}
-                        </div>
-                        <div class='block section_title'>
-                            {code()[2] && (
-                                <div class='anim-code'>{code()[2]}</div>
-                            )}
-                        </div>
-                        <div class='block section_title'>
-                            {code()[3] && (
-                                <div class='anim-code'>{code()[3]}</div>
-                            )}
-                        </div>
+                        {Array.from(Array(CODE_LENGTH).keys()).map(
+                            (_, index) => {
+                                return (
+                                    <div class='block section_title'>
+                                        {code()[index] && (
+                                            <div class='anim-code'>
+                                                {code()[index]}
+                                            </div>
+                                        )}
+                                    </div>
+                                )
+                            }
+                        )}
                     </div>
                 </div>
             </div>
