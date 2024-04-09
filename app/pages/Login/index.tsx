@@ -178,6 +178,8 @@ const CodeStage: Component<LoginChildProps> = ({
 
         let length = code().length
 
+        console.log(blocks)
+
         if (length <= 0) {
             codeInp.style.left = `0px`
             codeInp.style.transform = `translateX(0)`
@@ -185,12 +187,15 @@ const CodeStage: Component<LoginChildProps> = ({
             let left =
                 blocks[
                     Math.min(CODE_LENGTH - 1, length)
-                ].getBoundingClientRect().x
-
-            console.log(left)
+                ].getBoundingClientRect().left
 
             codeInp.style.transform = `translateX(0)`
-            codeInp.style.left = `${left - blockWidth * 2}px`
+
+            if (innerWidth >= 768) {
+                codeInp.style.left = `${left - blockWidth - innerWidth / 4}px`
+            } else {
+                codeInp.style.left = `${left - blockWidth - 10}px`
+            }
         }
     }
 
