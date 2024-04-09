@@ -1,2 +1,440 @@
 main.login-container {
+    width: 100%;
+    height: 100dvh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    inset: 0;
+
+    isolation: isolate;
+
+    background-color: var(--sixty-percent);
+
+    object {
+        width: 100px;
+        aspect-ratio: 1/1;
+
+        transform: translateY(0) scaleX(1);
+
+        will-change: transform;
+
+        animation: logo-go-up 1.2s 0.3s cubic-bezier(0.4, -0.01, 0, 1) forwards;
+
+        @keyframes logo-go-up {
+            0% {
+                transform: translateY(0) scaleX(1);
+            }
+            30% {
+                transform: translateY(7%) scaleX(1.6);
+            }
+            60% {
+                transform: translateY(-185%) scaleX(1);
+            }
+            100% {
+                transform: translateY(-170%) scaleX(1);
+            }
+        }
+    }
+
+    .login-wrapper {
+        width: 150%;
+        height: 50%;
+
+        position: absolute;
+        bottom: 0;
+
+        display: flex;
+        justify-content: center;
+
+        background-color: var(--sixty-percent);
+
+        transform: translateX(150%);
+
+        z-index: 1;
+
+        will-change: transform;
+        animation: cut-line-slidein 0.7s 0.5s
+            cubic-bezier(0.45, 0.02, 0.09, 0.98) forwards;
+
+        @keyframes cut-line-slidein {
+            from {
+                transform: translateX(150%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .login-data {
+            width: 100vw;
+            height: 100%;
+
+            position: relative;
+            isolation: isolate;
+
+            .phone-stage {
+                width: 100%;
+                height: 100%;
+
+                display: flex;
+                justify-content: space-between;
+                flex-direction: column;
+                gap: 2vh;
+
+                padding: 2em 1em 1.5em 1em;
+
+                transition: transform 0.6s cubic-bezier(0.45, 0.02, 0.09, 0.98);
+
+                &.code {
+                    transform: translateX(-200%);
+                }
+
+                .phone-input {
+                    width: 100%;
+
+                    position: relative;
+                    isolation: isolate;
+
+                    margin-top: -1em;
+
+                    @media screen and (max-height: 670px) {
+                        margin-top: 2.5em;
+                    }
+                    @media screen and (max-height: 600px) {
+                        margin-top: 0;
+                    }
+
+                    .holder {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5em;
+
+                        transform: translateY(-25%);
+                    }
+
+                    input {
+                        width: 100%;
+
+                        background-color: transparent;
+                        outline: none;
+                        border: none;
+                        border-radius: 0px;
+
+                        padding: 0.5em;
+
+                        border-bottom: 2px solid var(--addon-percent);
+
+                        direction: ltr;
+                        text-align: right;
+
+                        color: black;
+
+                        /* Chrome, Safari, Edge, Opera */
+                        &::-webkit-outer-spin-button,
+                        &::-webkit-inner-spin-button {
+                            -webkit-appearance: none;
+                            margin: 0;
+                        }
+
+                        /* Firefox */
+                        &[type='number'] {
+                            -moz-appearance: textfield;
+                        }
+
+                        &.inpError {
+                            border-bottom-color: var(--alert-error);
+                        }
+                    }
+
+                    .error {
+                        height: 2em;
+
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5em;
+                        color: var(--alert-error);
+                    }
+
+                    .clear-input {
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        left: 0;
+
+                        padding: 0.5em;
+
+                        svg {
+                            opacity: 0.7;
+                        }
+                    }
+                }
+
+                .submit-phone {
+                    width: 100%;
+
+                    background-color: var(--addon-percent);
+
+                    padding: 0.5em;
+
+                    border-radius: 10px;
+
+                    transition: 0.3s ease-in-out;
+
+                    &.disable {
+                        opacity: 0.6;
+                    }
+                }
+            }
+
+            .code-stage {
+                position: absolute;
+                inset: 0;
+
+                width: 100%;
+                height: 100%;
+
+                display: flex;
+                justify-content: space-between;
+                flex-direction: column;
+                gap: 2vh;
+
+                padding: 2em 1em 1.5em 1em;
+
+                transform: translateX(200%);
+
+                transition: transform 0.6s cubic-bezier(0.45, 0.02, 0.09, 0.98);
+                z-index: 1;
+
+                &.loading {
+                    filter: blur(2px);
+                    pointer-events: none;
+
+                    transition: 0.3s cubic-bezier(0.45, 0.02, 0.09, 0.98);
+                }
+
+                &.code {
+                    transform: translateX(0);
+                }
+
+                .header {
+                    .change-number {
+                        width: 100%;
+                        text-align: right;
+                        color: #575eff;
+
+                        margin-top: -0.5em;
+
+                        font-family: 'yekanBold';
+                    }
+                }
+
+                .code-input-container {
+                    width: 100%;
+
+                    display: flex;
+                    align-items: center;
+                    flex-direction: column;
+
+                    .input-wrapper {
+                        width: 80%;
+
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        position: relative;
+                        isolation: isolate;
+
+                        input {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+
+                            direction: rtl;
+                            text-align: center;
+
+                            background: transparent;
+
+                            caret-color: #333;
+
+                            color: var(--sixty-percent);
+
+                            // reset
+                            border: none;
+                        }
+
+                        .blocks {
+                            width: 100%;
+                            height: 100%;
+
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+
+                            z-index: -1;
+
+                            direction: ltr;
+
+                            .block {
+                                display: grid;
+                                place-items: center;
+
+                                width: 15%;
+
+                                height: 2.5em;
+
+                                border-bottom: 2px solid black;
+
+                                overflow: hidden;
+
+                                .anim-code {
+                                    width: 100%;
+                                    height: 100%;
+
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+
+                                    will-change: transform;
+                                    animation: anim-code 0.5s
+                                        cubic-bezier(0.175, 0.885, 0.32, 1.275)
+                                        forwards;
+
+                                    @keyframes anim-code {
+                                        from {
+                                            transform: translateY(-100%);
+                                        }
+                                        to {
+                                            transform: translateY(0);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .submit-code {
+                    width: 100%;
+
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 1em;
+
+                    background-color: var(--addon-percent);
+
+                    padding: 0.5em;
+
+                    border-radius: 10px;
+
+                    touch-action: manipulation;
+
+                    transition: transform 0.2s;
+
+                    margin-bottom: 10px;
+
+                    .logo {
+                        display: grid;
+                        place-items: center;
+
+                        svg {
+                            animation: none;
+                        }
+
+                        &:nth-child(1) {
+                            svg {
+                                rotate: 15deg;
+                            }
+                        }
+                        &:nth-child(2) {
+                            svg {
+                                rotate: -15deg;
+                            }
+                        }
+                    }
+
+                    &.anim {
+                        animation: code-btn-anim 0.5s ease-in-out forwards;
+
+                        @keyframes code-btn-anim {
+                            0% {
+                                transform: scale(1);
+                            }
+                            50% {
+                                transform: scale(0.96);
+                            }
+                            100% {
+                                transform: scale(1);
+                            }
+                        }
+
+                        .logo {
+                            &:nth-child(1) {
+                                svg {
+                                    @keyframes code-btn-logo-one {
+                                        0% {
+                                            rotate: 15deg;
+                                        }
+                                        20% {
+                                            transform: scale(1);
+                                        }
+                                    }
+                                }
+                            }
+                            &:nth-child(2) {
+                                svg {
+                                    rotate: -15deg;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .go-back {
+                    position: absolute;
+                    top: 2.5em;
+                    left: 1.5em;
+
+                    color: unset;
+                    background-color: transparent;
+                }
+            }
+
+            .header {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 1em;
+
+                h2.title {
+                    font-family: 'iranBold';
+                }
+
+                .desc {
+                    font-family: 'iranLight';
+                }
+            }
+        }
+    }
+
+    &.loading {
+        .logo {
+            svg {
+                animation: login-loading-bounce 0.5s alternate infinite;
+
+                @keyframes login-loading-bounce {
+                    from {
+                        transform: scaleX(1.3) translateY(-170%);
+                    }
+                    to {
+                        transform: translateY(-230%) scaleX(1);
+                    }
+                }
+            }
+        }
+    }
 }
