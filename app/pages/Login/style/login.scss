@@ -69,11 +69,15 @@ main.login-container {
         }
 
         .login-data {
-            width: 100vw;
+            width: 50vw;
             height: 100%;
 
             position: relative;
             isolation: isolate;
+
+            @media screen and (max-width: 768px) {
+                width: 100vw;
+            }
 
             .phone-stage {
                 width: 100%;
@@ -175,7 +179,8 @@ main.login-container {
                 .submit-phone {
                     width: 100%;
 
-                    background-color: var(--addon-percent);
+                    background-color: var(--ten-percent);
+                    color: white;
 
                     padding: 0.5em;
 
@@ -325,7 +330,8 @@ main.login-container {
                     justify-content: center;
                     gap: 1em;
 
-                    background-color: var(--addon-percent);
+                    background-color: var(--ten-percent);
+                    color: white;
 
                     padding: 0.5em;
 
