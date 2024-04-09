@@ -4,6 +4,8 @@ import {
     PhoneIcon,
     WarnnigIcon,
 } from '!/icons/login'
+import { user } from '!/store/user'
+import { useNavigate } from '@solidjs/router'
 import {
     Accessor,
     Component,
@@ -21,6 +23,8 @@ let phoneRegex = /^(0|09|09[0-9]{1,9})$/
 const Login: Component<{}> = props => {
     const [stage, setStage] = createSignal<'phone' | 'code'>('phone')
 
+    const navigate = useNavigate()
+
     const [data, setData] = createStore({
         phone: '',
         code: '',
@@ -28,6 +32,10 @@ const Login: Component<{}> = props => {
     const [error, setError] = createSignal('')
 
     const [loading, setLoading] = createSignal(false)
+
+    onMount(() => {
+        if (user.token) return navigate('/account')
+    })
 
     return (
         <main class='login-container'>

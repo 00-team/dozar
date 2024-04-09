@@ -39,7 +39,7 @@ const [user, setUser] = createStore<UserModel>({
     },
 
     // debug
-    token: '',
+    token: ' ',
 })
 
 export { user, setUser, type UserAddress, type UserModel }
