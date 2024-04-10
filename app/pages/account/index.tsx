@@ -3,11 +3,17 @@ import { WalletIcon } from '!/icons/account'
 import { user } from '!/store/user'
 import { useNavigate } from '@solidjs/router'
 import { Component, onMount } from 'solid-js'
+import { MyAuctions } from './MyAuctions'
+import { MyAuctionWins } from './myAuctionWins'
+import { MyProfile } from './myProfile'
+import { MyWallet } from './myWallet'
 
 import './style/account.scss'
 
 const Account: Component<{}> = props => {
     const navigate = useNavigate()
+
+    let section = window.location.pathname.split('/')[2]
 
     onMount(() => {
         if (!user.token) return navigate('/login')
@@ -41,7 +47,19 @@ const Account: Component<{}> = props => {
                         <img src='https://picsum.photos/300/300' alt='' />
                     </div>
                 </section>
-                <section class='account-body'></section>
+                <section class='account-body'>
+                    {section ? (
+                        <>
+                            {section === 'wallet' && <MyWallet />}
+                            {section === 'edit' && <MyProfile />}
+                            {section === 'auctions-won' && <MyAuctionWins />}
+                            {section === 'auctions' && <MyAuctions />}
+                        </>
+                    ) : (
+                        // default
+                        <MyAuctions />
+                    )}
+                </section>
             </div>
         </main>
     )
