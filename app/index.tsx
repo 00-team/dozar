@@ -63,6 +63,11 @@ export const App = () => {
                     <Route path={'/auction/:slug'} component={Auction} />
 
                     <Route path={'/account'} component={Account} />
+                    <Route path={'/account/auctions'} component={Account} />
+                    <Route path={'/account/auctions-won'} component={Account} />
+                    <Route path={'/account/wallet'} component={Account} />
+                    <Route path={'/account/edit'} component={Account} />
+
                     <Route path={'/login'} component={Login} />
                 </Routes>
             </Router>
