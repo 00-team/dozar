@@ -1,3 +1,4 @@
+import CountUp from '!/components/countUp'
 import { WalletIcon } from '!/icons/account'
 import { user } from '!/store/user'
 import { useNavigate } from '@solidjs/router'
@@ -22,11 +23,15 @@ const Account: Component<{}> = props => {
                     </div>
                     <div class='auctions column'>
                         <p class='title_small'>مزایده های شرکت کرده</p>
-                        <span class='title_small number'>19</span>
+                        <span class='title_small number'>
+                            <CountUp addTime={50} end={19} steps={2} />
+                        </span>
                     </div>
                     <div class='auctions-win column'>
                         <p class='title_small'>مزایده های برنده شده </p>
-                        <span class='title_small number'>19</span>
+                        <span class='title_small number'>
+                            <CountUp addTime={50} end={19} steps={1} />
+                        </span>
                     </div>
                     <div class='user_name column'>
                         <p class='title_small'>صدرا ادلاعی پور</p>
