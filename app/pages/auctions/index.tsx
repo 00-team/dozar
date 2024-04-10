@@ -45,7 +45,7 @@ const Auctions: Component<{}> = props => {
 
 interface AuctionCardProps extends AuctionModel {}
 
-const AuctionCard: Component = () => {
+export const AuctionCard: Component = () => {
     return (
         <div class='item'>
             <div class='item-img-wrapper'>
