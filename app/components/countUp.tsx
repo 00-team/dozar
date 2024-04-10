@@ -28,7 +28,7 @@ const CountUp: Component<CountUpProps> = props => {
             }
         } else {
             clearInterval(interval)
-            props.cb()
+            props.cb && props.cb()
             return
         }
     }
