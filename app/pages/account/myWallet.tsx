@@ -3,9 +3,16 @@ import { Component } from 'solid-js'
 import './style/mywallet.scss'
 
 import CountUp from '!/components/countUp'
+import { PiggyBankIcon } from '!/icons/account'
 import WalletImg from '!/static/imgs/wallet2.webp'
+import { createStore } from 'solid-js/store'
 
 export const MyWallet: Component<{}> = props => {
+    const [wallet, setwallet] = createStore({
+        holding: 1120405,
+        deposit: '',
+    })
+
     return (
         <section class='wallet-container'>
             <h2 class='title'>کیف پول من</h2>
@@ -37,7 +44,7 @@ export const MyWallet: Component<{}> = props => {
                         <p class='title wallet-holding'>
                             <CountUp
                                 format
-                                end={1120405}
+                                end={wallet.holding}
                                 steps={12345}
                                 addTime={20}
                             />
@@ -45,7 +52,22 @@ export const MyWallet: Component<{}> = props => {
                     </div>
                     <div class='card-bottom'></div>
                 </div>
-                <div class='wallet-input'></div>
+                <div class='wallet-input'>
+                    <div class='holder title_smaller'>
+                        <PiggyBankIcon />
+                        واریز به کیف پول
+                    </div>
+                    <input
+                        type='number'
+                        class='title_smaller'
+                        inputMode={'numeric'}
+                        placeholder='مقدار واریزی...'
+                        oninput={e => {
+                            setwallet({ deposit: e.target.value })
+                        }}
+                        value={wallet.deposit}
+                    />
+                </div>
                 <button class='cta title_smaller'>واریز</button>
             </div>
         </section>
