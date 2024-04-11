@@ -20,8 +20,15 @@ export const MyWallet: Component<{}> = props => {
                         />
                     </div>
                     <div class='card-header'>
-                        <div class='card-chip'></div>
                         <div class='card-logo'></div>
+
+                        <div class='card-chip'>
+                            <div class='chip-line'></div>
+                            <div class='chip-line'></div>
+                            <div class='chip-line'></div>
+                            <div class='chip-line'></div>
+                            <div class='chip-main'></div>
+                        </div>
                     </div>
                     <div class='card-main'>
                         <span class='holder'></span>
