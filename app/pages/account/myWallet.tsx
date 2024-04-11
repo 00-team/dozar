@@ -3,7 +3,7 @@ import { Component } from 'solid-js'
 import './style/mywallet.scss'
 
 import CountUp from '!/components/countUp'
-import WalletImg from '!/static/imgs/wallet.webp'
+import WalletImg from '!/static/imgs/wallet2.webp'
 
 export const MyWallet: Component<{}> = props => {
     return (
