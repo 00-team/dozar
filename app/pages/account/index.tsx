@@ -1,12 +1,8 @@
 import CountUp from '!/components/countUp'
 import { WalletIcon } from '!/icons/account'
 import { user } from '!/store/user'
-import { Link, useNavigate } from '@solidjs/router'
+import { Link, Outlet, useNavigate } from '@solidjs/router'
 import { Component, onMount } from 'solid-js'
-import { MyAuctions } from './MyAuctions'
-import { MyAuctionWins } from './myAuctionWins'
-import { MyProfile } from './myProfile'
-import { MyWallet } from './myWallet'
 
 import './style/account.scss'
 
@@ -59,17 +55,7 @@ const Account: Component<{}> = props => {
                 </section>
 
                 <section class='account-body'>
-                    {section ? (
-                        <>
-                            {section === 'wallet' && <MyWallet />}
-                            {section === 'profile' && <MyProfile />}
-                            {section === 'auctions-won' && <MyAuctionWins />}
-                            {section === 'auctions' && <MyAuctions />}
-                        </>
-                    ) : (
-                        // default
-                        <MyAuctions />
-                    )}
+                    <Outlet />
                 </section>
             </div>
         </main>
