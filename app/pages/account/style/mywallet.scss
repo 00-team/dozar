@@ -40,6 +40,10 @@
             isolation: isolate;
             overflow: hidden;
 
+            @media screen and (max-width: 768px) {
+                justify-content: center;
+            }
+
             .card-cover {
                 position: absolute;
                 inset: 0;
@@ -131,6 +135,10 @@
                     margin-top: -100px;
                     transform: translateY(50px);
                 }
+
+                @media screen and (max-width: 768px) {
+                    display: none;
+                }
             }
 
             .card-main {
@@ -184,6 +192,10 @@
             background-color: var(--ten-percent);
             color: white;
             border-radius: 15px;
+
+            @media screen and (max-width: 768px) {
+                width: 100%;
+            }
         }
     }
 }
