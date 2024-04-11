@@ -5,6 +5,7 @@ interface CountUpProps {
     steps?: number
     addTime: number
     cb?: () => void
+    format?: boolean
 }
 
 const CountUp: Component<CountUpProps> = props => {
@@ -37,7 +38,19 @@ const CountUp: Component<CountUpProps> = props => {
         clearInterval(interval)
     })
 
-    return <span id='counter-elem'>{counter()}</span>
+    return (
+        <span id='counter-elem'>
+            {props.format ? (
+                <>
+                    {counter()
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                </>
+            ) : (
+                <>{counter()}</>
+            )}
+        </span>
+    )
 }
 
 export default CountUp
