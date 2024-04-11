@@ -43,13 +43,10 @@ export const MyWallet: Component<{}> = props => {
                             />
                         </p>
                     </div>
-                    <div class='card-bottom'>
-                        <span class='holder'></span>
-                        <p class='username'></p>
-                    </div>
+                    <div class='card-bottom'></div>
                 </div>
                 <div class='wallet-input'></div>
-                <button class='cta title'>واریز</button>
+                <button class='cta title_smaller'>واریز</button>
             </div>
         </section>
     )
