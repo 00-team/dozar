@@ -20,7 +20,7 @@ export const MyWallet: Component<{}> = props => {
                         />
                     </div>
                     <div class='card-header'>
-                        <div class='card-logo'></div>
+                        <p class='card-logo'>DOZAR</p>
 
                         <div class='card-chip'>
                             <div class='chip-line'></div>
