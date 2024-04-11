@@ -39,7 +39,7 @@ export const MyWallet: Component<{}> = props => {
                                 format
                                 end={1120405}
                                 steps={12345}
-                                addTime={25}
+                                addTime={20}
                             />
                         </p>
                     </div>
