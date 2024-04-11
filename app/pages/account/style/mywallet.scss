@@ -149,5 +149,13 @@
                 }
             }
         }
+        .cta {
+            width: clamp(0px, 100%, 240px);
+
+            padding: 1em;
+            background-color: var(--ten-percent);
+            color: white;
+            border-radius: 15px;
+        }
     }
 }
