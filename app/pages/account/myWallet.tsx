@@ -2,6 +2,7 @@ import { Component } from 'solid-js'
 
 import './style/mywallet.scss'
 
+import CountUp from '!/components/countUp'
 import WalletImg from '!/static/imgs/wallet.webp'
 
 export const MyWallet: Component<{}> = props => {
@@ -30,9 +31,17 @@ export const MyWallet: Component<{}> = props => {
                             <div class='chip-main'></div>
                         </div>
                     </div>
+
                     <div class='card-main'>
-                        <span class='holder'></span>
-                        <p class='title wallet-holding'></p>
+                        <span class='holder title_smaller'>موجودی کیف پول</span>
+                        <p class='title wallet-holding'>
+                            <CountUp
+                                format
+                                end={1120405}
+                                steps={12345}
+                                addTime={25}
+                            />
+                        </p>
                     </div>
                     <div class='card-bottom'>
                         <span class='holder'></span>
