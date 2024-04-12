@@ -10,7 +10,7 @@ import { createStore } from 'solid-js/store'
 export const MyWallet: Component<{}> = props => {
     const [wallet, setwallet] = createStore({
         holding: 1120405,
-        deposit: '',
+        deposit: 0,
     })
 
     return (
@@ -63,7 +63,7 @@ export const MyWallet: Component<{}> = props => {
                         inputMode={'numeric'}
                         placeholder='مقدار واریزی...'
                         oninput={e => {
-                            setwallet({ deposit: e.target.value })
+                            setwallet({ deposit: e.target.valueAsNumber })
                         }}
                         value={wallet.deposit}
                     />
