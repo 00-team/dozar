@@ -4,6 +4,7 @@ import { createStore } from 'solid-js/store'
 import './style/myprofile.scss'
 
 import defaultImg from '!/static/imgs/default_profile.webp'
+import { PersonIcon } from '!/icons/account'
 
 const IMAGE_MIMETYPE = [
     'image/png',
@@ -15,7 +16,7 @@ const IMAGE_MIMETYPE = [
 
 export const MyProfile: Component<{}> = props => {
     const [profile, setProfile] = createStore({
-        username: '',
+        username: 'لورم ایپسوم',
         img: '',
     })
 
@@ -49,7 +50,19 @@ export const MyProfile: Component<{}> = props => {
                     }}
                 />
             </label>
-            <div class='profile-name'></div>
+            <div class='profile-name'>
+                <div class='holder title_smaller'>
+                    <PersonIcon />
+                    نام کاربری
+                </div>
+                <input
+                    type='text'
+                    class='title_smaller'
+                    value={profile.username}
+                    oninput={e => setProfile({ username: e.target.value })}
+                    autofocus
+                />
+            </div>
             <button class='cta title_smaller'>تایید</button>
         </div>
     )
