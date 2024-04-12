@@ -4,6 +4,7 @@ import { render } from 'solid-js/web'
 import { getDB } from './db'
 import { MyAuctions } from './pages/account/MyAuctions'
 import { MyAuctionWins } from './pages/account/myAuctionWins'
+import { MyProfile } from './pages/account/myProfile'
 import { MyWallet } from './pages/account/myWallet'
 import { SHOW_ADDHOME_AGAIN } from './store/dbLabels'
 
@@ -73,6 +74,7 @@ export const App = () => {
                             component={MyAuctionWins}
                         />
                         <Route path={'/wallet'} component={MyWallet} />
+                        <Route path={'/profile'} component={MyProfile} />
                         <Route path={'*'} component={MyAuctions} />
                     </Route>
 
