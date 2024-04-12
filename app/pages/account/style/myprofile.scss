@@ -1,0 +1,15 @@
+.myprofile {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 4vh;
+
+    padding: 3vh 3vw;
+
+    h2 {
+        font-family: 'arvandBold';
+    }
+}
