@@ -34,7 +34,7 @@ export default defineConfig(env => {
             target: 'esnext',
             outDir: 'dist',
             watch,
-            rollupOptions: {},
+            assetsInlineLimit: 0,
             copyPublicDir: false,
         },
         resolve: {
