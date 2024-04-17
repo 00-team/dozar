@@ -3,8 +3,8 @@ import { createStore } from 'solid-js/store'
 
 import './style/myprofile.scss'
 
-import defaultImg from '!/static/imgs/default_profile.webp'
 import { PersonIcon } from '!/icons/account'
+import defaultImg from '!/static/imgs/default_profile.webp'
 
 const IMAGE_MIMETYPE = [
     'image/png',
@@ -61,6 +61,7 @@ export const MyProfile: Component<{}> = props => {
                     value={profile.username}
                     oninput={e => setProfile({ username: e.target.value })}
                     autofocus
+                    maxLength={1024}
                 />
             </div>
             <button class='cta title_smaller'>تایید</button>
