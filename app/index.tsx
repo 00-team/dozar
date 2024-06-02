@@ -10,7 +10,7 @@ import { SHOW_ADDHOME_AGAIN } from './store/dbLabels'
 
 const Home = lazy(() => import('./pages/home'))
 const Navbar = lazy(() => import('./layout/navbar'))
-const Auctions = lazy(() => import('./pages/auctions'))
+import Auctions from 'pages/auctions'
 const Auction = lazy(() => import('./pages/auction'))
 
 const Account = lazy(() => import('./pages/account'))
