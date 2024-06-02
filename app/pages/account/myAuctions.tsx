@@ -1,9 +1,9 @@
-import { Component } from 'solid-js'
-import { AuctionCard } from '../auctions'
+import { lazy } from 'solid-js'
+const AuctionCard = lazy(() => import('../auctions'))
 
 import './style/myauctions.scss'
 
-export const MyAuctions: Component<{}> = props => {
+export const MyAuctions = () => {
     return (
         <div class='myauctions'>
             <h2 class='title'>مزایده های من</h2>
