@@ -56,6 +56,19 @@ const Home: Component<{}> = props => {
                     </Link>
                 </div>
             </section>
+            <a
+                referrerpolicy='origin'
+                target='_blank'
+                href='https://trustseal.enamad.ir/?id=496629&Code=duyzTreHs7iFitqyQtwSVTHxfqRh2bli'
+            >
+                <img
+                    referrerpolicy='origin'
+                    src='https://trustseal.enamad.ir/logo.aspx?id=496629&Code=duyzTreHs7iFitqyQtwSVTHxfqRh2bli'
+                    alt=''
+                    style='cursor:pointer'
+                    code='duyzTreHs7iFitqyQtwSVTHxfqRh2bli'
+                />
+            </a>
         </main>
     )
 }
